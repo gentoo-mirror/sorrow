@@ -1,0 +1,17 @@
+--- a/wscript	2014-11-24 08:51:04.571863631 +1000
++++ b/wscript	2014-11-24 08:51:30.194848760 +1000
+@@ -16,14 +16,7 @@
+                    mandatory=True)
+ 
+ 
+-def gdk_pixbuf_query_loaders(bld):
+-    bld.exec_command('gdk-pixbuf-query-loaders --update-cache')
+-
+-
+ def build(bld):
+-    if bld.cmd == 'install':
+-        bld.add_post_fun(gdk_pixbuf_query_loaders)
+-
+     bld.new_task_gen(
+         features='c cshlib',
+         source='io-webp.c',
