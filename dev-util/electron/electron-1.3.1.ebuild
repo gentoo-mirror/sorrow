@@ -258,16 +258,11 @@ src_prepare() {
 	# electron patches
 	epatch "${FILESDIR}/electron-gentoo-build-fixes.patch"
 	epatch "${FILESDIR}/electron-bootstrap.patch"
-
-	#Update toolchain
-	sed -e "s|'sysroot%': '<(sysroot)'|'sysroot%': ''|" \
-	-e "s|'<!(<(source_root)/tools/linux/sysroot_ld_path.sh <(sysroot))',||" \
-	-e 's|<(source_root)/tools/linux/pkg-config-wrapper "<(sysroot)" "<(target_arch)" "<(system_libdir)"|pkg-config|' \
-	-i toolchain.gypi || die
+	epatch "${FILESDIR}/toolchain.patch"
 
 	# node patches
 	cd "${NODE_S}" || die
-	#epatch "${FILESDIR}/node-gentoo-build-fixes.patch"
+	epatch "${FILESDIR}/node-gentoo-build-fixes.patch"
 	epatch "${FILESDIR}/node-external-snapshots.patch"
 	# make sure node uses the correct version of v8
 	rm -r deps/v8 || die
@@ -303,7 +298,7 @@ src_prepare() {
 
 	# libcc patches
 	cd "${LIBCC_S}" || die
-	#epatch "${FILESDIR}/libchromiumcontent-gentoo-build-fixes.patch"
+	epatch "${FILESDIR}/libchromiumcontent-gentoo-build-fixes.patch"
 
 	# chromium patches
 	cd "${S}" || die

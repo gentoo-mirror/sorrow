@@ -1,0 +1,25 @@
+--- toolchain.gypi.orig	2016-08-22 03:59:29.330886761 +1000
++++ toolchain.gypi	2016-08-22 04:07:03.872325248 +1000
+@@ -61,11 +61,11 @@
+           ],
+         },
+         # Copy conditionally-set variables out one scope.
+-        'sysroot%': '<(sysroot)',
++        'sysroot%': '',
+         'system_libdir%': '<(system_libdir)',
+ 
+         # Redirect pkg-config to search from sysroot.
+-        'pkg-config%': '<(source_root)/tools/linux/pkg-config-wrapper "<(sysroot)" "<(target_arch)" "<(system_libdir)"',
++        'pkg-config%': 'pkg-config',
+       }],
+ 
+       # Set default compiler flags depending on ARM version.
+@@ -146,7 +146,7 @@
+             ],
+             'ldflags': [
+               '--sysroot=<(sysroot)',
+-              '<!(<(source_root)/tools/linux/sysroot_ld_path.sh <(sysroot))',
++              
+             ],
+           }]
+         ],
