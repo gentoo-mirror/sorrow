@@ -15,13 +15,13 @@ inherit check-reqs chromium-2 eutils flag-o-matic multilib multiprocessing pax-u
 # Keep this in sync with vendor/brightray/vendor/libchromiumcontent/VERSION
 CHROMIUM_VERSION="52.0.2743.82"
 # Keep this in sync with vendor/brightray
-BRIGHTRAY_COMMIT="689e41c3318a592d1ffd6fe3b4255e981a668f49"
+BRIGHTRAY_COMMIT="08525d16f467a1e3d130ba52892dd544c6c2c17a"
 # Keep this in sync with vendor/node
 NODE_COMMIT="ee8c429deaee0adeeef069c3ad34c0defe53a567"
 # Keep this in sync with vendor/native_mate
-NATIVE_MATE_COMMIT="d9bfe6a49d8585916bd8dc77165154afeee4e5b6"
+NATIVE_MATE_COMMIT="b5e5de626c6a57e44c7e6448d8bbaaac475d493c"
 # Keep this in sync with vendor/brightray/vendor/libchromiumcontent
-LIBCHROMIUMCONTENT_COMMIT="0b5aa7b6ca450681c58087e14f72238aab5ab823"
+LIBCHROMIUMCONTENT_COMMIT="086d162df0962c12d2db5a9fbe488aa52ad9a327"
 # Keep this in sync with package.json#devDependencies
 ASAR_VERSION="0.12.1"
 
@@ -155,7 +155,7 @@ DEPEND+=" $(python_gen_any_dep '
 ')"
 python_check_deps() {
 	has_version --host-root "dev-python/beautifulsoup:python-2[${PYTHON_USEDEP}]" &&
-	has_version --host-root "dev-python/beautifulsoup:4[${PYTHON_USEDEP}]" &&
+	has_version --host-root ">=dev-python/beautifulsoup-4.3.2:4[${PYTHON_USEDEP}]" &&
 	has_version --host-root "dev-python/html5lib[${PYTHON_USEDEP}]" &&
 	has_version --host-root "dev-python/jinja[${PYTHON_USEDEP}]" &&
 	has_version --host-root "dev-python/jsmin[${PYTHON_USEDEP}]" &&
@@ -256,14 +256,12 @@ src_prepare() {
 	ln -s "${WORKDIR}/${ASAR_P}/node_modules" "${S}/node_modules" || die
 
 	# electron patches
-	epatch "${FILESDIR}/electron-gentoo-build-fixes.patch"
-	epatch "${FILESDIR}/electron-bootstrap.patch"
-	epatch "${FILESDIR}/toolchain.patch"
+	epatch "${FILESDIR}/${P}.patch"
 
 	# node patches
 	cd "${NODE_S}" || die
-	epatch "${FILESDIR}/node-gentoo-build-fixes.patch"
-	epatch "${FILESDIR}/node-external-snapshots.patch"
+	epatch "${FILESDIR}/${P}-vendor-node.patch"
+	epatch "${FILESDIR}/${P}-vendor-node-external-snapshots.patch"
 	# make sure node uses the correct version of v8
 	rm -r deps/v8 || die
 	ln -s ../../../v8 deps/ || die
@@ -283,22 +281,15 @@ src_prepare() {
 
 	# brightray patches
 	cd "${BRIGHTRAY_S}" || die
-	epatch "${FILESDIR}/brightray-gentoo-build-fixes-r1.patch"
-	epatch "${FILESDIR}/libchromiumcontent-update.patch"
-
-	#Update brightray
-	sed -e "s|'-latomic',||" \
-	-e "s|'-lpthread',|'-lpthread','-latomic',|" \
-	-i brightray.gyp || die
+	epatch "${FILESDIR}/${P}-vendor-brightray.patch"
 
 	if use gtk3; then
-		sed -e "s|'linux_system_libraries': 'gtk+-2.0|'linux_system_libraries': 'gtk+-3.0|" \
-		-i brightray.gyp || die
+		epatch "${FILESDIR}/brightray-gtk3.patch"
 	fi
 
 	# libcc patches
 	cd "${LIBCC_S}" || die
-	epatch "${FILESDIR}/libchromiumcontent-gentoo-build-fixes.patch"
+	epatch "${FILESDIR}/${P}-vendor-libchromiumcontent.patch"
 
 	# chromium patches
 	cd "${S}" || die
@@ -306,8 +297,14 @@ src_prepare() {
 	epatch "${FILESDIR}/chromium-system-jinja-r9.patch"
 	epatch "${FILESDIR}/chromium-system-icu.patch"
 	epatch "${FILESDIR}/chromium-disable-widevine.patch"
+	epatch "${FILESDIR}/chromium-last-commit-position-r0.patch"
+	epatch "${FILESDIR}/chromium-snapshot-toolchain-r1.patch"
 	epatch "${FILESDIR}/chromium-remove-gardiner-mod-font.patch"
-	epatch "${FILESDIR}/chromium-shared-v8.patch"
+	epatch "${FILESDIR}/chromium-pdfium-r0.patch"
+	epatch "${FILESDIR}/chromium-system-zlib-r0.patch"
+	epatch "${FILESDIR}/chromium-linker-warnings-r0.patch"
+	epatch "${FILESDIR}/chromium-ffmpeg-license-r0.patch"
+	epatch "${FILESDIR}/chromium-shared-v8-r1.patch"
 	epatch "${FILESDIR}/chromium-lto-fixes.patch"
 
 	# libcc chromium patches
@@ -343,6 +340,7 @@ src_prepare() {
 		'base/third_party/xdg_mime' \
 		'base/third_party/xdg_user_dirs' \
 		'breakpad/src/third_party/curl' \
+		'breakpad/src/third_party/musl' \
 		'chrome/third_party/mozilla_security_manager' \
 		'courgette/third_party' \
 		'net/third_party/mozilla_security_manager' \
@@ -351,12 +349,16 @@ src_prepare() {
 		'third_party/analytics' \
 		'third_party/angle' \
 		'third_party/angle/src/third_party/compiler' \
-		'third_party/angle/src/third_party/murmurhash' \
 		'third_party/angle/src/third_party/libXNVCtrl' \
+		'third_party/angle/src/third_party/murmurhash' \
+		'third_party/angle/src/third_party/trace_event' \
 		'third_party/boringssl' \
 		'third_party/brotli' \
 		'third_party/cacheinvalidation' \
 		'third_party/catapult' \
+		'third_party/catapult/third_party/py_vulcanize' \
+		'third_party/catapult/third_party/py_vulcanize/third_party/rcssmin' \
+		'third_party/catapult/third_party/py_vulcanize/third_party/rjsmin' \
 		'third_party/catapult/tracing/third_party/components/polymer' \
 		'third_party/catapult/tracing/third_party/d3' \
 		'third_party/catapult/tracing/third_party/gl-matrix' \
@@ -385,11 +387,11 @@ src_prepare() {
 		'third_party/libsrtp' \
 		'third_party/libudev' \
 		'third_party/libusb' \
-		'third_party/libxml/chromium' \
-		'third_party/libwebm' \
-		'third_party/libyuv' \
 		'third_party/libvpx' \
-		'third_party/libvpx/source/libvpx/third_party/x86inc/' \
+		'third_party/libvpx/source/libvpx/third_party/x86inc' \
+		'third_party/libwebm' \
+		'third_party/libxml/chromium' \
+		'third_party/libyuv' \
 		'third_party/lss' \
 		'third_party/lzma_sdk' \
 		'third_party/mesa' \
@@ -489,7 +491,7 @@ src_configure() {
 		-Duse_gtk3=1"
 
 	# Needed for system icu - we don't need additional data files.
-	myconf+=" -Dicu_use_data_file_flag=0"
+	# myconf+=" -Dicu_use_data_file_flag=1"
 
 	# TODO: patch gyp so that this arm conditional is not needed.
 	if ! use arm; then
@@ -539,7 +541,8 @@ src_configure() {
 		-Dhost_clang=0
 		-Dlinux_use_bundled_binutils=0
 		-Dlinux_use_bundled_gold=0
-		-Dlinux_use_gold_flags=0"
+		-Dlinux_use_gold_flags=0
+		-Dsysroot="
 
 	ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
 	myconf+=" -Dproprietary_codecs=1 -Dffmpeg_branding=${ffmpeg_branding}"
@@ -548,9 +551,12 @@ src_configure() {
 	# Note: these are for Gentoo use ONLY. For your own distribution,
 	# please get your own set of keys. Feel free to contact chromium@gentoo.org
 	# for more info.
-	myconf+=" -Dgoogle_api_key=AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc
-		-Dgoogle_default_client_id=329227923882.apps.googleusercontent.com
-		-Dgoogle_default_client_secret=vgKG0NNv7GoDpbtoFNLxCUXu"
+	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
+	local google_default_client_id="329227923882.apps.googleusercontent.com"
+	local google_default_client_secret="vgKG0NNv7GoDpbtoFNLxCUXu"
+	myconf+=" -Dgoogle_api_key=${google_api_key}
+		-Dgoogle_default_client_id=${google_default_client_id}
+		-Dgoogle_default_client_secret=${google_default_client_secret}"
 
 	local myarch="$(tc-arch)"
 	if [[ $myarch = amd64 ]] ; then
@@ -559,6 +565,9 @@ src_configure() {
 	elif [[ $myarch = x86 ]] ; then
 		target_arch=ia32
 		ffmpeg_target_arch=ia32
+	elif [[ $myarch = arm64 ]] ; then
+		target_arch=arm64
+		ffmpeg_target_arch=arm64
 	elif [[ $myarch = arm ]] ; then
 		target_arch=arm
 		ffmpeg_target_arch=$(usex neon arm-neon arm)
@@ -566,17 +575,17 @@ src_configure() {
 		local CTARGET=${CTARGET:-${CHOST}}
 		if [[ $(tc-is-softfloat) == "no" ]]; then
 
-			myconf+=" -Darm_float_abi=hard"
+			myconf_gyp+=" -Darm_float_abi=hard"
 		fi
 		filter-flags "-mfpu=*"
-		use neon || myconf+=" -Darm_fpu=${ARM_FPU:-vfpv3-d16}"
+		use neon || myconf_gyp+=" -Darm_fpu=${ARM_FPU:-vfpv3-d16}"
 
 		if [[ ${CTARGET} == armv[78]* ]]; then
-			myconf+=" -Darmv7=1"
+			myconf_gyp+=" -Darmv7=1"
 		else
-			myconf+=" -Darmv7=0"
+			myconf_gyp+=" -Darmv7=0"
 		fi
-		myconf+=" -Dsysroot=
+		myconf_gyp+=" -Dsysroot=
 			$(gyp_use neon arm_neon)
 			-Ddisable_nacl=1"
 	else
@@ -605,7 +614,8 @@ src_configure() {
 
 		# Prevent libvpx build failures. Bug 530248, 544702, 546984.
 		if [[ ${myarch} == amd64 || ${myarch} == x86 ]]; then
-			filter-flags -mno-mmx -mno-sse2 -mno-ssse3 -mno-sse4.1 -mno-avx -mno-avx2
+			filter-flags -mno-mmx -mno-sse2 -mno-ssse3 -mno-sse4.1 \
+						 -mno-avx -mno-avx2
 		fi
 	fi
 
@@ -642,14 +652,16 @@ src_configure() {
 
 	third_party/libaddressinput/chromium/tools/update-strings.py || die
 
+	touch chrome/test/data/webui/i18n_process_css_test.html || die
+
 	einfo "Configuring bundled nodejs..."
 	pushd vendor/node > /dev/null || die
 	# Make sure gyp_node does not run
 	echo '#!/usr/bin/env python' > tools/gyp_node.py || die
-	./configure --shared-openssl --shared-libuv --shared-http-parser \
-				--shared-zlib --without-npm --with-intl=system-icu \
-				--without-dtrace --dest-cpu=${target_arch} \
-				--prefix="" || die
+	./configure --shared --without-bundled-v8 --shared-openssl --shared-libuv \
+				--shared-http-parser --shared-zlib --without-npm \
+				--with-intl=system-icu --without-dtrace \
+				--dest-cpu=${target_arch} --prefix="" || die
 	popd > /dev/null || die
 
 	# libchromiumcontent configuration

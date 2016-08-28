@@ -1,15 +1,15 @@
-From 4ec57d1c20b841c6121a77f1539b0c759a031904 Mon Sep 17 00:00:00 2001
+From 2183f98352eece5f30b90d83cb9304772a57065b Mon Sep 17 00:00:00 2001
 From: Elvis Pranskevichus <elvis@magic.io>
 Date: Mon, 8 Feb 2016 15:14:58 -0500
 Subject: [PATCH] brightray build fixes
 
 ---
- brightray.gyp  | 52 ++++++++++++++++++++++++++++++++++++++++++++++++----
- brightray.gypi | 21 ++++++++-------------
- 2 files changed, 56 insertions(+), 17 deletions(-)
+ brightray.gyp  | 32 +++++++++++++++++++++++++++++---
+ brightray.gypi | 20 +++++++-------------
+ 2 files changed, 36 insertions(+), 16 deletions(-)
 
 diff --git a/brightray.gyp b/brightray.gyp
-index d7120ea..d0fd603 100644
+index d089dba..d9edabd 100644
 --- a/brightray.gyp
 +++ b/brightray.gyp
 @@ -1,7 +1,7 @@
@@ -21,19 +21,18 @@ index d7120ea..d0fd603 100644
    },
    'includes': [
      'filenames.gypi',
-@@ -9,6 +9,11 @@
+@@ -9,6 +9,10 @@
    'targets': [
      {
        'target_name': 'brightray',
 +      'dependencies': [
-+        'cups',
 +        'gconf',
 +        '<(libchromiumcontent_src_dir)/chromiumcontent/chromiumcontent.gyp:chromiumcontent_all'
 +      ],
        'type': 'static_library',
        'include_dirs': [
          '.',
-@@ -100,12 +105,9 @@
+@@ -104,8 +108,6 @@
              }, {
                'link_settings': {
                  'libraries': [
@@ -42,11 +41,7 @@ index d7120ea..d0fd603 100644
                    # Following libraries are required by libchromiumcontent:
                    '-lasound',
                    '-lcap',
--                  '-lcups',
-                   '-lrt',
-                   '-ldl',
-                   '-lresolv',
-@@ -274,5 +276,47 @@
+@@ -333,5 +335,29 @@
          }],  # OS=="win"
        ],
      },
@@ -74,31 +69,13 @@ index d7120ea..d0fd603 100644
 +        }],
 +      ],
 +    },
-+    {
-+      'target_name': 'cups',
-+      'type': 'none',
-+      'conditions': [
-+        ['use_cups==1', {
-+          'direct_dependent_settings': {
-+            'defines': [
-+              'USE_CUPS',
-+            ],
-+            'link_settings': {
-+              'libraries': [
-+                '-lcups',
-+              ],
-+            },
-+          },
-+        }],
-+      ],
-+    },
    ],
  }
 diff --git a/brightray.gypi b/brightray.gypi
-index 4513fa9..95bdfa1 100644
+index 634aec0..8d86999 100644
 --- a/brightray.gypi
 +++ b/brightray.gypi
-@@ -1,10 +1,14 @@
+@@ -1,9 +1,13 @@
  {
 -  'includes': [
 -    'vendor/download/libchromiumcontent/filenames.gypi',
@@ -115,8 +92,7 @@ index 4513fa9..95bdfa1 100644
      'pkg-config%': 'pkg-config',
      'conditions': [
        # The "libchromiumcontent_component" is defined when calling "gyp".
-       ['libchromiumcontent_component', {
-@@ -258,22 +263,12 @@
+@@ -234,22 +238,12 @@
          'conditions': [
            ['OS=="linux"', {
              'cflags': [
