@@ -413,6 +413,7 @@ src_prepare() {
 		'third_party/polymer' \
 		'third_party/protobuf' \
 		'third_party/protobuf/third_party/six' \
+		'third_party/re2' \
 		'third_party/qcms' \
 		'third_party/sfntly' \
 		'third_party/skia' \
