@@ -15,13 +15,13 @@ inherit check-reqs chromium-2 eutils flag-o-matic multilib multiprocessing pax-u
 # Keep this in sync with vendor/brightray/vendor/libchromiumcontent/VERSION
 CHROMIUM_VERSION="52.0.2743.82"
 # Keep this in sync with vendor/brightray
-BRIGHTRAY_COMMIT="08525d16f467a1e3d130ba52892dd544c6c2c17a"
+BRIGHTRAY_COMMIT="554946c7873bbc6930779c871fe230856575049a"
 # Keep this in sync with vendor/node
 NODE_COMMIT="ee8c429deaee0adeeef069c3ad34c0defe53a567"
 # Keep this in sync with vendor/native_mate
 NATIVE_MATE_COMMIT="b5e5de626c6a57e44c7e6448d8bbaaac475d493c"
 # Keep this in sync with vendor/brightray/vendor/libchromiumcontent
-LIBCHROMIUMCONTENT_COMMIT="086d162df0962c12d2db5a9fbe488aa52ad9a327"
+LIBCHROMIUMCONTENT_COMMIT="c5cf295ef93d4ee88bff0c4b06b28ff0969a890e"
 # Keep this in sync with package.json#devDependencies
 ASAR_VERSION="0.12.1"
 
@@ -52,7 +52,7 @@ NATIVE_MATE_S="${S}/vendor/native_mate"
 LIBCC_S="${BRIGHTRAY_S}/vendor/libchromiumcontent"
 
 LICENSE="BSD"
-SLOT="0/$(get_version_component_range 2)"
+SLOT="$(get_version_component_range 1-2)"
 KEYWORDS="~amd64"
 IUSE="custom-cflags cups gnome gnome-keyring gtk3 hidpi kerberos lto neon pic +proprietary-codecs pulseaudio selinux +system-ffmpeg +tcmalloc"
 RESTRICT="!system-ffmpeg? ( proprietary-codecs? ( bindist ) )"
@@ -64,7 +64,9 @@ QA_FLAGS_IGNORED=".*\.nexe"
 # right tools for it, bug #469144 .
 QA_PRESTRIPPED=".*\.nexe"
 
-RDEPEND=">=app-accessibility/speech-dispatcher-0.8:=
+#	dev-libs/re2:=
+RDEPEND="!<dev-util/electron-0.36.12-r4
+	>=app-accessibility/speech-dispatcher-0.8:=
 	app-arch/bzip2:=
 	app-arch/snappy:=
 	cups? ( >=net-print/cups-1.3.11:= )
@@ -78,7 +80,6 @@ RDEPEND=">=app-accessibility/speech-dispatcher-0.8:=
 	dev-libs/libxslt:=
 	dev-libs/nspr:=
 	>=dev-libs/nss-3.14.3:=
-	dev-libs/re2:=
 	gnome? ( >=gnome-base/gconf-2.24.0:= )
 	gnome-keyring? ( >=gnome-base/libgnome-keyring-3.12:= )
 	>=media-libs/alsa-lib-1.0.19:=
@@ -261,7 +262,7 @@ src_prepare() {
 	# node patches
 	cd "${NODE_S}" || die
 	epatch "${FILESDIR}/${P}-vendor-node.patch"
-	epatch "${FILESDIR}/${P}-vendor-node-external-snapshots.patch"
+	epatch "${FILESDIR}/electron-vendor-node-external-snapshots-r0.patch"
 	# make sure node uses the correct version of v8
 	rm -r deps/v8 || die
 	ln -s ../../../v8 deps/ || die
@@ -383,6 +384,7 @@ src_prepare() {
 		'third_party/libaddressinput' \
 		'third_party/libjingle' \
 		'third_party/libphonenumber' \
+		'third_party/libpng' \
 		'third_party/libsecret' \
 		'third_party/libsrtp' \
 		'third_party/libudev' \
@@ -407,14 +409,14 @@ src_prepare() {
 		'third_party/pdfium/third_party/bigint' \
 		'third_party/pdfium/third_party/freetype' \
 		'third_party/pdfium/third_party/lcms2-2.6' \
-		'third_party/pdfium/third_party/libjpeg' \
 		'third_party/pdfium/third_party/libopenjpeg20' \
+		'third_party/pdfium/third_party/libpng16' \
 		'third_party/pdfium/third_party/zlib_v128' \
 		'third_party/polymer' \
 		'third_party/protobuf' \
 		'third_party/protobuf/third_party/six' \
-		'third_party/re2' \
 		'third_party/qcms' \
+		'third_party/re2' \
 		'third_party/sfntly' \
 		'third_party/skia' \
 		'third_party/smhasher' \
@@ -478,21 +480,19 @@ src_configure() {
 		-Duse_system_jsoncpp=1
 		-Duse_system_libevent=1
 		-Duse_system_libjpeg=1
-		-Duse_system_libpng=1
 		-Duse_system_libwebp=1
 		-Duse_system_libxml=1
 		-Duse_system_libxslt=1
 		-Duse_system_minizip=1
 		-Duse_system_nspr=1
-		-Duse_system_re2=1
 		-Duse_system_snappy=1
 		-Duse_system_speex=1
 		-Duse_system_xdg_utils=1
-		-Duse_system_zlib=1
-		-Duse_gtk3=1"
+		-Duse_system_zlib=1"
 
 	# Needed for system icu - we don't need additional data files.
-	# myconf+=" -Dicu_use_data_file_flag=1"
+	myconf+=" -Dicu_use_data_file_flag=0"
+	myconf+=" -Dgenerate_character_data=0"
 
 	# TODO: patch gyp so that this arm conditional is not needed.
 	if ! use arm; then
@@ -507,6 +507,7 @@ src_configure() {
 		$(gyp_use gnome use_gconf)
 		$(gyp_use gnome-keyring use_gnome_keyring)
 		$(gyp_use gnome-keyring linux_link_gnome_keyring)
+		$(gyp_use gtk3)
 		$(gyp_use hidpi enable_hidpi)
 		$(gyp_use kerberos)
 		$(gyp_use lto)
@@ -659,7 +660,9 @@ src_configure() {
 	pushd vendor/node > /dev/null || die
 	# Make sure gyp_node does not run
 	echo '#!/usr/bin/env python' > tools/gyp_node.py || die
-	./configure --shared --without-bundled-v8 --shared-openssl --shared-libuv \
+	# --shared-libuv cannot be used as electron's node fork
+	# patches uv_loop structure.
+	./configure --shared --without-bundled-v8 --shared-openssl \
 				--shared-http-parser --shared-zlib --without-npm \
 				--with-intl=system-icu --without-dtrace \
 				--dest-cpu=${target_arch} --prefix="" || die
