@@ -9,8 +9,9 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
-inherit check-reqs chromium-2 eutils flag-o-matic multilib multiprocessing pax-utils \
-	portability python-any-r1 readme.gentoo-r1 toolchain-funcs versionator virtualx
+inherit check-reqs chromium-2 eutils gnome2-utils flag-o-matic multilib \
+	multiprocessing pax-utils portability python-any-r1 readme.gentoo-r1 \
+	toolchain-funcs versionator virtualx xdg-utils
 
 # Keep this in sync with vendor/brightray/vendor/libchromiumcontent/VERSION
 CHROMIUM_VERSION="52.0.2743.82"
@@ -64,7 +65,6 @@ QA_FLAGS_IGNORED=".*\.nexe"
 # right tools for it, bug #469144 .
 QA_PRESTRIPPED=".*\.nexe"
 
-#	dev-libs/re2:=
 RDEPEND="!<dev-util/electron-0.36.12-r4
 	>=app-accessibility/speech-dispatcher-0.8:=
 	app-arch/bzip2:=
@@ -80,6 +80,7 @@ RDEPEND="!<dev-util/electron-0.36.12-r4
 	dev-libs/libxslt:=
 	dev-libs/nspr:=
 	>=dev-libs/nss-3.14.3:=
+	dev-libs/re2:=
 	gnome? ( >=gnome-base/gconf-2.24.0:= )
 	gnome-keyring? ( >=gnome-base/libgnome-keyring-3.12:= )
 	>=media-libs/alsa-lib-1.0.19:=
@@ -306,7 +307,8 @@ src_prepare() {
 	epatch "${FILESDIR}/chromium-linker-warnings-r0.patch"
 	epatch "${FILESDIR}/chromium-ffmpeg-license-r0.patch"
 	epatch "${FILESDIR}/chromium-shared-v8-r1.patch"
-	epatch "${FILESDIR}/chromium-lto-fixes.patch"
+	epatch "${FILESDIR}/chromium-lto-fixes-r1.patch"
+	#epatch "${FILESDIR}/chromium-icu-58-r1.patch"
 
 	# libcc chromium patches
 	_unnest_patches "${LIBCC_S}/patches"
@@ -704,11 +706,17 @@ eninja() {
 }
 
 src_compile() {
-	local ninja_targets="electron"
+	local ninja_targets="electron" compile_target="out/R"
+
+	eninja -C ${compile_target} mksnapshot || die
+	pax-mark -m ${compile_target}/mksnapshot
+
+	eninja -C ${compile_target} nodebin || die
+	pax-mark -m ${compile_target}/nodebin
 
 	# Even though ninja autodetects number of CPUs, we respect
 	# user's options, for debugging with -j 1 or any other reason.
-	eninja -C out/R ${ninja_targets} || die
+	eninja -C ${compile_target} ${ninja_targets} || die
 }
 
 src_install() {
@@ -735,6 +743,8 @@ src_install() {
 	doins -r out/R/resources
 	doins -r out/R/locales
 	dosym "${install_dir}/electron" "/usr/bin/electron${install_suffix}"
+
+	pax-mark -rm "${ED}/${install_dir}/electron"
 
 	# Install Node headers
 	HEADERS_ONLY=1 \

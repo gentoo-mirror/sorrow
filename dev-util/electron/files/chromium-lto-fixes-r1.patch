@@ -11,6 +11,16 @@ index cce7b3c..3b905c0 100644
              ],
            }],
          ],
+@@ -6248,7 +6248,7 @@
+       },
+     }],
+     # TODO(pcc): Make these flags work correctly with CFI.
+-    ['use_lto!=0 and cfi_vptr==0', {
++    ['use_lto!=0 and cfi_vptr==0 and clang==1', {
+       'target_defaults': {
+         'target_conditions': [
+           ['_toolset=="target"', {
+
 diff --git a/build/android/disable_gcc_lto.gypi.orig b/build/android/disable_gcc_lto.gypi
 index a733c7a..57570f8 100644
 --- a/build/android/disable_gcc_lto.gypi.orig
