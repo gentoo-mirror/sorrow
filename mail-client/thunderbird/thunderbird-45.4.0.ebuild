@@ -5,40 +5,38 @@
 EAPI=6
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
-MOZ_LIGHTNING_VER="4.7.2"
+MOZ_LIGHTNING_VER="4.7.4"
 MOZ_LIGHTNING_GDATA_VER="2.6"
 
 # This list can be updated using scripts/get_langs.sh from the mozilla overlay
-MOZ_LANGS=(ar ast be bg bn-BD br ca cs cy da de el en en-GB en-US es-AR
-es-ES et eu fi fr fy-NL ga-IE gd gl he hr hsb hu hy-AM id is it ja ko lt
-nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru si sk sl sq sr sv-SE ta-LK tr
-uk vi zh-CN zh-TW )
+MOZ_LANGS=(en-GB ru )
 
 # Convert the ebuild version to the upstream mozilla version, used by mozlinguas
 MOZ_PV="${PV/_beta/b}"
-# ESR releases have slightly version numbers
-if [[ ${MOZ_ESR} == 1 ]]; then
-	MOZ_PV="${MOZ_PV}esr"
-fi
-MOZ_P="${PN}-${MOZ_PV}"
 
 # Enigmail version
 EMVER="1.9.1"
 
 # Patches
 PATCH="thunderbird-38.0-patches-0.1"
-PATCHFF="firefox-45.0-patches-04"
+PATCHFF="firefox-45.0-patches-06"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
+# ESR releases have slightly version numbers
+if [[ ${MOZ_ESR} == 1 ]]; then
+	MOZ_PV="${MOZ_PV}esr"
+fi
+MOZ_P="${PN}-${MOZ_PV}"
+
 MOZCONFIG_OPTIONAL_GTK3=1
 MOZCONFIG_OPTIONAL_JIT="enabled"
-inherit flag-o-matic toolchain-funcs mozconfig-v6.45 makeedit autotools pax-utils check-reqs nsplugins mozlinguas-v2
+inherit flag-o-matic toolchain-funcs mozconfig-v6.45 makeedit autotools pax-utils check-reqs nsplugins mozlinguas-v2 fdo-mime gnome2-utils
 
 DESCRIPTION="Thunderbird Mail Client"
 HOMEPAGE="http://www.mozilla.com/en-US/thunderbird/"
 
-KEYWORDS="~alpha amd64 ~arm ~ppc ppc64 x86 ~x86-fbsd ~amd64-linux ~x86-linux"
+KEYWORDS="~alpha ~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd ~amd64-linux ~x86-linux"
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="bindist crypt hardened ldap lightning +minimal mozdom selinux"
@@ -130,7 +128,8 @@ src_prepare() {
 
 	# Apply our patchset from firefox to thunderbird as well
 	pushd "${S}"/mozilla &>/dev/null || die
-	eapply "${WORKDIR}/firefox"
+	eapply "${WORKDIR}/firefox" \
+		"${FILESDIR}"/firefox-45-gcc6.patch
 	popd &>/dev/null || die
 
 	# Ensure that are plugins dir is enabled as default
@@ -176,7 +175,6 @@ src_prepare() {
 }
 
 src_configure() {
-	declare MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	MEXTENSIONS="default"
 
 	####################################
@@ -187,9 +185,6 @@ src_configure() {
 
 	mozconfig_init
 	mozconfig_config
-
-	# We want rpath support to prevent unneeded hacks on different libc variants
-	append-ldflags -Wl,-rpath="${MOZILLA_FIVE_HOME}"
 
 	# It doesn't compile on alpha without this LDFLAGS
 	use alpha && append-ldflags "-Wl,--no-relax"
@@ -202,7 +197,6 @@ src_configure() {
 	mozconfig_annotate '' --enable-calendar
 
 	# Other tb-specific settings
-	mozconfig_annotate '' --with-default-mozilla-five-home=${MOZILLA_FIVE_HOME}
 	mozconfig_annotate '' --with-user-appdir=.thunderbird
 
 	mozconfig_use_enable ldap
@@ -258,9 +252,6 @@ src_compile() {
 }
 
 src_install() {
-	declare MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
-	DICTPATH="\"${EPREFIX}/usr/share/myspell\""
-
 	declare emid
 	cd "${BUILD_OBJ_DIR}" || die
 
@@ -272,17 +263,12 @@ src_install() {
 	mozconfig_install_prefs \
 		"${BUILD_OBJ_DIR}/dist/bin/defaults/pref/all-gentoo.js"
 
-	# dev-db/sqlite does not have FTS3_TOKENIZER support.
+		# dev-db/sqlite does not have FTS3_TOKENIZER support.
 	# gloda needs it to function, and bad crashes happen when its enabled and doesn't work
 	if in_iuse system-sqlite && use system-sqlite ; then
 		echo "lockPref(\"mailnews.database.global.indexer.enabled\", false);" \
 			>>"${BUILD_OBJ_DIR}/dist/bin/defaults/pref/all-gentoo.js" || die
 	fi
-
-	# Set default path to search for dictionaries.
-	echo "pref(\"spellchecker.dictionary_path\", ${DICTPATH});" \
-		>> "${BUILD_OBJ_DIR}/dist/bin/defaults/pref/all-gentoo.js" \
-		|| die
 
 	# Pax mark xpcshell for hardened support, only used for startupcache creation.
 	pax-mark m "${BUILD_OBJ_DIR}"/dist/bin/xpcshell
@@ -293,17 +279,30 @@ src_install() {
 	# Install language packs
 	mozlinguas_src_install
 
+	local size sizes icon_path icon
 	if ! use bindist; then
-		newicon "${S}"/other-licenses/branding/thunderbird/content/icon48.png thunderbird-icon.png
+		icon_path="${S}/other-licenses/branding/thunderbird"
+		icon="${PN}-icon"
+
 		domenu "${FILESDIR}"/icon/${PN}.desktop
 	else
-		newicon "${S}"/mail/branding/aurora/content/icon48.png thunderbird-icon-unbranded.png
+		icon_path="${S}/mail/branding/aurora"
+		icon="${PN}-icon-unbranded"
+
 		newmenu "${FILESDIR}"/icon/${PN}-unbranded.desktop \
 			${PN}.desktop
 
 		sed -i -e "s:Mozilla\ Thunderbird:EarlyBird:g" \
 			"${ED}"/usr/share/applications/${PN}.desktop
 	fi
+
+	# Install a 48x48 icon into /usr/share/pixmaps for legacy DEs
+	newicon "${icon_path}"/mailicon48.png "${icon}".png
+	# Install icons for menu entry
+	sizes="16 22 24 32 48 256"
+	for size in ${sizes}; do
+		newicon -s ${size} "${icon_path}/mailicon${size}.png" "${icon}.png"
+	done
 
 	local emid
 	# stage extra locales for lightning and install over existing
@@ -354,7 +353,14 @@ src_install() {
 	fi
 }
 
+pkg_preinst() {
+	gnome2_icon_savelist
+}
+
 pkg_postinst() {
+	fdo-mime_desktop_database_update
+	gnome2_icon_cache_update
+
 	if use crypt; then
 		local peimpl=$(eselect --brief --colour=no pinentry show)
 		case "${peimpl}" in
@@ -376,4 +382,9 @@ pkg_postinst() {
 		elog "fails to show the calendar extension after restarting with above change"
 		elog "please file a bug report."
 	fi
+}
+
+pkg_postrm() {
+	fdo-mime_desktop_database_update
+	gnome2_icon_cache_update
 }
