@@ -73,7 +73,7 @@ RDEPEND="!<dev-util/electron-0.36.12-r4
 	>=dev-libs/elfutils-0.149
 	dev-libs/expat:=
 	dev-libs/glib:=
-	>=dev-libs/icu-55.1:=
+	>=dev-libs/icu-58:=
 	>=dev-libs/jsoncpp-0.5.0-r1:=
 	>=dev-libs/libevent-1.4.13:=
 	dev-libs/libxml2:=[icu]
@@ -259,6 +259,9 @@ src_prepare() {
 
 	# electron patches
 	epatch "${FILESDIR}/${P}.patch"
+	if use gtk3; then
+		epatch "${FILESDIR}/gtk3-menu-bar.patch"
+	fi
 
 	# node patches
 	cd "${NODE_S}" || die
@@ -308,7 +311,7 @@ src_prepare() {
 	epatch "${FILESDIR}/chromium-ffmpeg-license-r0.patch"
 	epatch "${FILESDIR}/chromium-shared-v8-r1.patch"
 	epatch "${FILESDIR}/chromium-lto-fixes-r1.patch"
-	#epatch "${FILESDIR}/chromium-icu-58-r1.patch"
+	epatch "${FILESDIR}/chromium-icu-58-r1.patch"
 
 	# libcc chromium patches
 	_unnest_patches "${LIBCC_S}/patches"
