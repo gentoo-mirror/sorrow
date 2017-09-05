@@ -48,7 +48,7 @@ src_configure()
 		--prefix="${EPREFIX}/usr" \
 		--confdir="${EPREFIX}/etc" \
 		--runparts="${EPREFIX}/bin/run-parts" \
-		--libdir="${EPREFIX}/usr/$(get_libdir)" \
+		--libdir="${EPREFIX}/$(get_libdir)" \
 		$(local_use_enable boot) \
 		$(local_use_enable persistent) \
 		$(local_use_enable yearly) \
@@ -71,8 +71,8 @@ src_install()
 	done
 	if use setgid
 	then
-		fowners root:cron "${EPREFIX}/usr/$(get_libdir)/systemd-cron/crontab_setgid"
-		fperms 2755 "${EPREFIX}/usr/$(get_libdir)/systemd-cron/crontab_setgid"
+		fowners root:cron "${EPREFIX}/$(get_libdir)/systemd-cron/crontab_setgid"
+		fperms 2755 "${EPREFIX}/$(get_libdir)/systemd-cron/crontab_setgid"
 		diropts -m1730 -oroot -g cron; keepdir "${EPREFIX}/var/spool/cron/crontabs"
 	fi
 }
