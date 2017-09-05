@@ -14,7 +14,7 @@ NO_WAF_LIBDIR=1
 DESCRIPTION="A GdkPixbuf loader for the WebP file format"
 HOMEPAGE="https://github.com/aruiz/webp-pixbuf-loader"
 SRC_URI=""
-EGIT_REPO_URI="git://github.com/aruiz/webp-pixbuf-loader.git https://github.com/aruiz/webp-pixbuf-loader.git"
+EGIT_REPO_URI="https://github.com/aruiz/webp-pixbuf-loader.git"
 
 LICENSE="GPL"
 SLOT="0"
