@@ -21,12 +21,16 @@ RDEPEND="sys-libs/libcap
 	elogind? ( sys-auth/elogind )
 	>=dev-libs/wayland-1.16
 	x11-libs/pixman
-	x11-libs/libxcb
-	x11-libs/xcb-util-errors
-	x11-libs/xcb-util-image
-	x11-libs/xcb-util-wm"
+	X? (
+		x11-libs/libxcb
+		x11-libs/xcb-util-errors
+		x11-libs/xcb-util-image
+		x11-libs/xcb-util-wm
+	)
+"
 DEPEND="${RDEPEND}
-	dev-libs/wayland-protocols"
+	dev-libs/wayland-protocols
+"
 
 DOCS=( README.md CONTRIBUTING.md docs/env_vars.md )
 

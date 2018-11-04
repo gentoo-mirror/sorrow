@@ -1,0 +1,41 @@
+--- a/include/modules/sni/sni.hpp	2018-10-27 05:15:35.196058952 +1000
++++ b/include/modules/sni/sni.hpp	2018-10-27 05:16:09.464516126 +1000
+@@ -3,7 +3,7 @@
+ #include <dbus-status-notifier-item.h>
+ #include <gtkmm.h>
+ #include <json/json.h>
+-#include <filesystem>
++#include <experimental/filesystem>
+ 
+ namespace waybar::modules::SNI {
+ 
+--- a/include/modules/battery.hpp	2018-10-27 05:15:18.081830603 +1000
++++ b/include/modules/battery.hpp	2018-10-27 05:16:38.131898511 +1000
+@@ -1,6 +1,6 @@
+ #pragma once
+ 
+-#include <filesystem>
++#include <experimental/filesystem>
+ #include <fstream>
+ #include <iostream>
+ #include <fmt/format.h>
+@@ -11,7 +11,7 @@
+ 
+ namespace waybar::modules {
+ 
+-namespace fs = std::filesystem;
++namespace fs = std::experimental::filesystem;
+ 
+ class Battery : public ALabel {
+   public:
+--- a/src/modules/sni/sni.cpp	2018-10-27 05:36:40.323409709 +1000
++++ b/src/modules/sni/sni.cpp	2018-10-27 05:40:34.740619799 +1000
+@@ -187,7 +187,7 @@
+   if (!icon_name.empty()) {
+     try {
+       // Try to find icons specified by path and filename
+-      if (std::filesystem::exists(icon_name)) {
++      if (std::experimental::filesystem::exists(icon_name)) {
+         auto pixbuf = Gdk::Pixbuf::create_from_file(icon_name);
+         if (pixbuf->gobj() != nullptr) {
+           // An icon specified by path and filename may be the wrong size for

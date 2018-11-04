@@ -15,7 +15,7 @@ SRC_URI="https://github.com/swaywm/sway/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
-IUSE="xwayland elogind wallpapers zsh-completion bash-completion fish-completion"
+IUSE="+xwayland elogind +wallpapers zsh-completion bash-completion fish-completion"
 
 RDEPEND="dev-libs/wlroots[elogind=,xwayland?]
 	dev-libs/json-c:0=
@@ -27,11 +27,13 @@ RDEPEND="dev-libs/wlroots[elogind=,xwayland?]
 	x11-libs/cairo
 	x11-libs/pango
 	x11-libs/gdk-pixbuf[jpeg]
-	virtual/pam"
+	virtual/pam
+"
 
 DEPEND="${RDEPEND}
 	dev-libs/wayland-protocols
-	app-text/scdoc"
+	app-text/scdoc
+"
 
 S="${WORKDIR}/${PN}-${MY_PV}"
 
