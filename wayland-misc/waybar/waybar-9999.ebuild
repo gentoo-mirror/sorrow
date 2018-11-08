@@ -30,10 +30,6 @@ DEPEND="${RDEPEND}
 	dev-libs/wayland-protocols
 "
 
-src_prepare() {
-	eapply "${FILESDIR}/filesystem.patch"
-}
-
 src_configure() {
 	local emesonargs=(
 		-Dlibnl=$(usex netlink enabled disabled)
