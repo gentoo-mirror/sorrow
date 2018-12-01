@@ -175,7 +175,11 @@ src_unpack() {
 src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
-	eapply "${FILESDIR}"/${P}-support-latest-cbindgen.patch
+	eapply "${FILESDIR}/firefox-init-wayland-clipboard.patch"
+	eapply "${FILESDIR}/mozilla-1415078.patch"
+	eapply "${FILESDIR}/mozilla-1493081.patch"
+	eapply "${FILESDIR}/mozilla-1504689.patch"
+	eapply "${FILESDIR}/mozilla-1507475.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -225,8 +229,6 @@ src_prepare() {
 	# However, when available, an unsupported version can cause problems, bug #669548
 	sed -i -e "s@check_prog('RUSTFMT', add_rustup_path('rustfmt')@check_prog('RUSTFMT', add_rustup_path('rustfmt_do_not_use')@" \
 		"${S}"/build/moz.configure/rust.configure || die
-	# Allow user to apply any additional patches without modifing ebuild
-	eapply_user
 
 	# Autotools configure is now called old-configure.in
 	# This works because there is still a configure.in that happens to be for the
