@@ -1,0 +1,194 @@
+diff -up firefox-63.0.3/widget/gtk/mozcontainer.cpp.mozbz1507475 firefox-63.0.3/widget/gtk/mozcontainer.cpp
+--- firefox-63.0.3/widget/gtk/mozcontainer.cpp.mozbz1507475	2018-11-15 01:20:56.000000000 +0100
++++ firefox-63.0.3/widget/gtk/mozcontainer.cpp	2018-11-26 09:36:13.083772336 +0100
+@@ -169,6 +169,8 @@ moz_container_class_init (MozContainerCl
+ }
+ 
+ #if defined(MOZ_WAYLAND)
++static struct wl_subcompositor *subcompositor;
++
+ static void
+ registry_handle_global (void *data,
+                         struct wl_registry *registry,
+@@ -176,9 +178,8 @@ registry_handle_global (void *data,
+                         const char *interface,
+                         uint32_t version)
+ {
+-    MozContainer *container = MOZ_CONTAINER(data);
+     if(strcmp(interface, "wl_subcompositor") == 0) {
+-        container->subcompositor =
++        subcompositor =
+             static_cast<wl_subcompositor*>(wl_registry_bind(registry,
+                                            name,
+                                            &wl_subcompositor_interface,
+@@ -197,6 +198,24 @@ static const struct wl_registry_listener
+     registry_handle_global,
+     registry_handle_global_remove
+ };
++
++struct wl_subcompositor* subcompositor_get(void)
++{
++    if (!subcompositor) {
++        GdkDisplay *gdk_display = gdk_display_get_default();
++        // Available as of GTK 3.8+
++        static auto sGdkWaylandDisplayGetWlDisplay =
++            (wl_display *(*)(GdkDisplay *))
++            dlsym(RTLD_DEFAULT, "gdk_wayland_display_get_wl_display");
++
++        wl_display* display = sGdkWaylandDisplayGetWlDisplay(gdk_display);
++        wl_registry* registry = wl_display_get_registry(display);
++        wl_registry_add_listener(registry, &registry_listener, nullptr);
++        wl_display_dispatch(display);
++        wl_display_roundtrip(display);
++    }
++    return subcompositor;
++}
+ #endif
+ 
+ void
+@@ -208,25 +227,10 @@ moz_container_init (MozContainer *contai
+ 
+ #if defined(MOZ_WAYLAND)
+     {
+-      container->subcompositor = nullptr;
+       container->surface = nullptr;
+       container->subsurface = nullptr;
+       container->eglwindow = nullptr;
+       container->parent_surface_committed = false;
+-
+-      GdkDisplay *gdk_display = gtk_widget_get_display(GTK_WIDGET(container));
+-      if (GDK_IS_WAYLAND_DISPLAY (gdk_display)) {
+-          // Available as of GTK 3.8+
+-          static auto sGdkWaylandDisplayGetWlDisplay =
+-              (wl_display *(*)(GdkDisplay *))
+-              dlsym(RTLD_DEFAULT, "gdk_wayland_display_get_wl_display");
+-
+-          wl_display* display = sGdkWaylandDisplayGetWlDisplay(gdk_display);
+-          wl_registry* registry = wl_display_get_registry(display);
+-          wl_registry_add_listener(registry, &registry_listener, container);
+-          wl_display_dispatch(display);
+-          wl_display_roundtrip(display);
+-        }
+     }
+ #endif
+ }
+@@ -298,7 +302,7 @@ moz_container_map_surface(MozContainer *
+         }
+ 
+         container->subsurface =
+-          wl_subcompositor_get_subsurface (container->subcompositor,
++          wl_subcompositor_get_subsurface (subcompositor_get(),
+                                            container->surface,
+                                            gtk_surface);
+         gint x, y;
+diff -up firefox-63.0.3/widget/gtk/mozcontainer.h.mozbz1507475 firefox-63.0.3/widget/gtk/mozcontainer.h
+--- firefox-63.0.3/widget/gtk/mozcontainer.h.mozbz1507475	2018-11-15 01:20:56.000000000 +0100
++++ firefox-63.0.3/widget/gtk/mozcontainer.h	2018-11-26 09:36:13.083772336 +0100
+@@ -69,7 +69,6 @@ struct _MozContainer
+     GList         *children;
+ 
+ #ifdef MOZ_WAYLAND
+-    struct wl_subcompositor *subcompositor;
+     struct wl_surface       *surface;
+     struct wl_subsurface    *subsurface;
+     struct wl_egl_window    *eglwindow;
+diff -up firefox-63.0.3/widget/gtk/nsGtkKeyUtils.cpp.mozbz1507475 firefox-63.0.3/widget/gtk/nsGtkKeyUtils.cpp
+--- firefox-63.0.3/widget/gtk/nsGtkKeyUtils.cpp.mozbz1507475	2018-11-15 01:20:56.000000000 +0100
++++ firefox-63.0.3/widget/gtk/nsGtkKeyUtils.cpp	2018-11-26 09:36:13.084772332 +0100
+@@ -584,68 +584,37 @@ static const struct wl_keyboard_listener
+     keyboard_handle_modifiers,
+ };
+ 
+-static void
+-seat_handle_capabilities(void *data, struct wl_seat *seat,
+-                         unsigned int caps)
+-{
+-    static wl_keyboard *keyboard = nullptr;
+-
+-    if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
+-        keyboard = wl_seat_get_keyboard(seat);
+-        wl_keyboard_add_listener(keyboard, &keyboard_listener, nullptr);
+-    } else if (keyboard && !(caps & WL_SEAT_CAPABILITY_KEYBOARD)) {
+-        wl_keyboard_destroy(keyboard);
+-        keyboard = nullptr;
+-    }
+-}
+-
+-static const struct wl_seat_listener seat_listener = {
+-      seat_handle_capabilities,
+-};
+-
+-static void
+-gdk_registry_handle_global(void               *data,
+-                           struct wl_registry *registry,
+-                           uint32_t            id,
+-                           const char         *interface,
+-                           uint32_t            version)
+-{
+-    if (strcmp(interface, "wl_seat") == 0) {
+-        wl_seat *seat =
+-            (wl_seat*)wl_registry_bind(registry, id, &wl_seat_interface, 1);
+-        wl_seat_add_listener(seat, &seat_listener, data);
+-    }
+-}
+-
+-static void
+-gdk_registry_handle_global_remove(void               *data,
+-                                 struct wl_registry *registry,
+-                                 uint32_t            id)
+-{
+-}
+-
+-static const struct wl_registry_listener keyboard_registry_listener = {
+-    gdk_registry_handle_global,
+-    gdk_registry_handle_global_remove
+-};
+-
+ void
+ KeymapWrapper::InitBySystemSettingsWayland()
+ {
+-    // Available as of GTK 3.8+
+-    static auto sGdkWaylandDisplayGetWlDisplay =
+-        (wl_display *(*)(GdkDisplay *))
+-        dlsym(RTLD_DEFAULT, "gdk_wayland_display_get_wl_display");
+-
+-    wl_display *display =
+-        sGdkWaylandDisplayGetWlDisplay(gdk_display_get_default());
+-    wl_registry_add_listener(wl_display_get_registry(display),
+-                             &keyboard_registry_listener, this);
+-
+-    // Call wl_display_roundtrip() twice to make sure all
+-    // callbacks are processed.
+-    wl_display_roundtrip(display);
+-    wl_display_roundtrip(display);
++    GdkDeviceManager* manager =
++        gdk_display_get_device_manager(gdk_display_get_default());
++    GList* devices =
++        gdk_device_manager_list_devices(manager, GDK_DEVICE_TYPE_MASTER);
++    GdkDevice* device = nullptr;
++
++    GList* list = devices;
++    while (devices) {
++        device = static_cast<GdkDevice*>(devices->data);
++        if (gdk_device_get_source(device) == GDK_SOURCE_KEYBOARD) {
++            break;
++        }
++        devices = devices->next;
++   }
++
++   if (list) {
++       g_list_free(list);
++   }
++
++   if (device) {
++      // Present in Gtk+ 3.10
++      static auto sGdkWaylandDeviceGetWlKeyboard =
++          (struct wl_keyboard * (*)(GdkDevice *device))
++          dlsym(RTLD_DEFAULT, "gdk_wayland_device_get_wl_keyboard");
++
++      wl_keyboard_add_listener(sGdkWaylandDeviceGetWlKeyboard(device),
++                               &keyboard_listener, nullptr);
++   }
+ }
+ #endif
+ 

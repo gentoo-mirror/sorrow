@@ -1,0 +1,12 @@
+diff -up firefox-63.0.1/widget/gtk/nsClipboardWayland.cpp.old firefox-63.0.1/widget/gtk/nsClipboardWayland.cpp
+--- firefox-63.0.1/widget/gtk/nsClipboardWayland.cpp.old	2018-11-14 10:26:47.602412372 +0100
++++ firefox-63.0.1/widget/gtk/nsClipboardWayland.cpp	2018-11-14 10:27:27.847245617 +0100
+@@ -153,7 +153,7 @@ DataOffer::GetData(wl_display* aDisplay,
+ 
+     GIOChannel *channel = g_io_channel_unix_new(pipe_fd[0]);
+     GError* error = nullptr;
+-    char* clipboardData;
++    char* clipboardData = nullptr;
+ 
+     g_io_channel_set_encoding(channel, nullptr, &error);
+     if (!error) {
