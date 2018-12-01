@@ -15,9 +15,9 @@ SRC_URI="https://github.com/swaywm/sway/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
-IUSE="+xwayland elogind +wallpapers zsh-completion bash-completion fish-completion"
+IUSE="+X elogind +wallpapers zsh-completion bash-completion fish-completion"
 
-RDEPEND="dev-libs/wlroots[elogind=,xwayland?]
+RDEPEND=">=dev-libs/wlroots-0.2[elogind=,X?]
 	dev-libs/json-c:0=
 	dev-libs/libpcre
 	dev-libs/libinput
@@ -39,7 +39,7 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_configure() {
 	local emesonargs=(
-		-Denable-xwayland=$(usex xwayland true false)
+		-Denable-xwayland=$(usex X true false)
 		-Ddefault-wallpaper=$(usex wallpapers true false)
 		-Dzsh-completions=$(usex zsh-completion true false)
 		-Dbash-completions=$(usex bash-completion true false)
