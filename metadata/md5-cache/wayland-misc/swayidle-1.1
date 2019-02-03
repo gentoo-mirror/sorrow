@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install test
+DEPEND=dev-libs/wayland elogind? ( >=sys-auth/elogind-237 ) systemd? ( >=sys-apps/systemd-237 ) >=dev-libs/wayland-protocols-1.14 doc? ( app-text/scdoc ) !<dev-libs/sway-1.0_rc1 >=dev-util/meson-0.45.1 >=dev-util/ninja-1.7.2
+DESCRIPTION=Idle management daemon for Wayland
+EAPI=6
+HOMEPAGE=https://github.com/swaywm/swayidle
+IUSE=systemd elogind zsh-completion bash-completion fish-completion +doc
+KEYWORDS=~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
+LICENSE=MIT
+RDEPEND=dev-libs/wayland elogind? ( >=sys-auth/elogind-237 ) systemd? ( >=sys-apps/systemd-237 )
+REQUIRED_USE=?? ( elogind systemd )
+SLOT=0
+SRC_URI=https://github.com/swaywm/swayidle/archive/1.1.tar.gz -> swayidle-1.1.tar.gz
+_eclasses_=meson	2780db7405ab6249571d07667ab97ba1	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	cac3169468f893670dac3e7cb940e045	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-utils-r1	12114a2a9aab35b93efc037a196b3234	toolchain-funcs	f164325a2cdb5b3ea39311d483988861
+_md5_=fb6ec5bd5fc5ff429299be3fb855bdf3
