@@ -48,7 +48,6 @@ src_configure() {
 		-Dfish-completions=$(usex fish-completion true false)
 		-Dtray=enabled
 		-Dgdk-pixbuf=enabled
-		-Dsway-version=${PV}
 	)
 
 	meson_src_configure
