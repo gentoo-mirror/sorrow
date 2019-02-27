@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="+X elogind +wallpapers zsh-completion bash-completion fish-completion +doc"
 
-RDEPEND=">=dev-libs/wlroots-0.3[elogind=,X?]
+RDEPEND=">=dev-libs/wlroots-0.4[elogind=,X?]
 	dev-libs/json-c:0=
 	dev-libs/libpcre
 	dev-libs/libinput
