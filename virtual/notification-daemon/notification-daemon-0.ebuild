@@ -13,7 +13,7 @@ RDEPEND="
 		gnome-base/gnome-shell ) )
 	kde? ( kde-plasma/plasma-workspace )
 	wayland? ( || ( gnome-base/gnome-shell
-		wayland-misc/mako
+		gui-apps/mako
 	) )
 	!gnome? ( !kde? (  !wayland? ( || (
 		x11-misc/notification-daemon
