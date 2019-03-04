@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="+X elogind +wallpapers zsh-completion bash-completion fish-completion +doc"
 
-RDEPEND=">=dev-libs/wlroots-0.4[elogind=,X?]
+RDEPEND=">=gui-libs/wlroots-0.4[elogind=,X?]
 	dev-libs/json-c:0=
 	dev-libs/libpcre
 	dev-libs/libinput
@@ -28,8 +28,8 @@ RDEPEND=">=dev-libs/wlroots-0.4[elogind=,X?]
 	x11-libs/pango
 	x11-libs/gdk-pixbuf[jpeg]
 	virtual/pam
-	wayland-misc/swaylock
-	wayland-misc/swayidle
+	gui-apps/swaylock
+	gui-apps/swayidle
 "
 
 DEPEND="${RDEPEND}
