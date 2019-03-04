@@ -3,6 +3,6 @@ DESCRIPTION=Virtual for notification daemon dbus service
 EAPI=6
 IUSE=gnome kde wayland
 KEYWORDS=alpha amd64 arm ~arm64 ia64 ~mips ppc ppc64 sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~x86-solaris
-RDEPEND=gnome? ( || ( x11-misc/notification-daemon gnome-base/gnome-shell ) ) kde? ( kde-plasma/plasma-workspace ) wayland? ( || ( gnome-base/gnome-shell wayland-misc/mako ) ) !gnome? ( !kde? ( !wayland? ( || ( x11-misc/notification-daemon gnome-extra/cinnamon xfce-extra/xfce4-notifyd x11-misc/notify-osd x11-misc/dunst >=x11-wm/awesome-3.4.4 x11-wm/enlightenment[enlightenment_modules_notification] x11-wm/enlightenment[e_modules_notification] x11-misc/mate-notification-daemon lxqt-base/lxqt-notificationd net-misc/eventd[notification] ) ) ) )
+RDEPEND=gnome? ( || ( x11-misc/notification-daemon gnome-base/gnome-shell ) ) kde? ( kde-plasma/plasma-workspace ) wayland? ( || ( gnome-base/gnome-shell gui-apps/mako ) ) !gnome? ( !kde? ( !wayland? ( || ( x11-misc/notification-daemon gnome-extra/cinnamon xfce-extra/xfce4-notifyd x11-misc/notify-osd x11-misc/dunst >=x11-wm/awesome-3.4.4 x11-wm/enlightenment[enlightenment_modules_notification] x11-wm/enlightenment[e_modules_notification] x11-misc/mate-notification-daemon lxqt-base/lxqt-notificationd net-misc/eventd[notification] ) ) ) )
 SLOT=0
-_md5_=c9d50245fa374b3143ab42a5773133cf
+_md5_=fe879deaa5438f7010f20ff061ab0572
