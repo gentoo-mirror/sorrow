@@ -22,7 +22,7 @@ RDEPEND="dev-libs/wayland
 DEPEND="${RDEPEND}
 	>=dev-libs/wayland-protocols-1.14
 	doc? ( app-text/scdoc )
-	!<dev-libs/sway-1.0_rc1
+	!<gui-wm/sway-1.0_rc1
 "
 src_configure() {
 	local emesonargs=(
