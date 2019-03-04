@@ -1,0 +1,8 @@
+move dev-libs/sway gui-wm/sway
+move dev-libs/wlroots gui-libs/wlroots
+move wayland-misc/swayidle gui-apps/swayidle
+move wayland-misc/swaylock gui-apps/swaylock
+move wayland-misc/waybar gui-apps/waybar
+move wayland-misc/slurp gui-apps/slurp
+move wayland-misc/mako gui-apps/mako
+move x11-misc/plotinus gui-apps/plotinus
