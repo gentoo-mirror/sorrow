@@ -8,16 +8,14 @@ inherit meson
 DESCRIPTION="i3-compatible Wayland window manager"
 HOMEPAGE="http://swaywm.org/"
 
-MY_PV=${PV/_rc/-rc}
-
-SRC_URI="https://github.com/swaywm/sway/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/swaywm/sway/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="+X elogind +wallpapers zsh-completion bash-completion fish-completion +doc"
 
-RDEPEND=">=gui-libs/wlroots-0.4[elogind=,X?]
+RDEPEND=">=gui-libs/wlroots-0.5[elogind=,X?]
 	dev-libs/json-c:0=
 	dev-libs/libpcre
 	dev-libs/libinput
@@ -36,8 +34,6 @@ DEPEND="${RDEPEND}
 	dev-libs/wayland-protocols
 	doc? ( >=app-text/scdoc-1.8.1 )
 "
-
-S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_configure() {
 	local emesonargs=(
