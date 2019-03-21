@@ -12,7 +12,7 @@ DESCRIPTION="An improved Python library for i3wm extensions"
 HOMEPAGE="https://github.com/acrisci/i3ipc-python"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
-RDEPEND="|| ( x11-wm/i3 x11-wm/i3-gaps dev-libs/sway )"
+RDEPEND="|| ( x11-wm/i3 x11-wm/i3-gaps gui-wm/sway )"
 
 LICENSE="BSD"
 SLOT="0"
