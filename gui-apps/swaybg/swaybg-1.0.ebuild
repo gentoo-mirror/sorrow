@@ -41,9 +41,5 @@ src_configure() {
 		-Dman-pages=$(usex man enabled disabled)
 		-Dgdk-pixbuf=$(usex gdk-pixbuf enabled disabled)
 	)
-	if [[ ${PV} != 9999 ]]; then
-		emesonargs+=("-Dswaylock-version=${PV}")
-	fi
-
 	meson_src_configure
 }
