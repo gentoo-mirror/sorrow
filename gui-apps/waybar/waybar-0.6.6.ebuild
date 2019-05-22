@@ -3,11 +3,11 @@
 
 EAPI=6
 
-inherit git-r3 meson
+inherit meson
 
 DESCRIPTION="Highly customizable Wayland Polybar like bar"
 HOMEPAGE="https://github.com/Alexays/Waybar"
-EGIT_REPO_URI="https://github.com/Alexays/Waybar.git"
+SRC_URI="https://github.com/Alexays/Waybar/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
@@ -19,16 +19,17 @@ RDEPEND="sys-libs/libcap
 	dev-libs/libinput
 	dev-libs/wayland
 	dev-cpp/gtkmm:3.0
-	gui-libs/wlroots
 	tray? ( dev-libs/libdbusmenu[gtk3] )
 	dev-libs/jsoncpp
 	dev-libs/libsigc++
 	netlink? ( dev-libs/libnl )
 	pulseaudio? ( media-sound/pulseaudio )
+	>=dev-libs/spdlog-1.3.1
 "
 DEPEND="${RDEPEND}
 	dev-libs/wayland-protocols
 "
+S=${WORKDIR}/Waybar-${PV}
 
 src_configure() {
 	local emesonargs=(
