@@ -3,6 +3,5 @@ gui-apps/swaybg 1.0: Screen locker for Wayland
 gui-apps/swayidle 1.3: Idle management daemon for Wayland
 gui-apps/swaylock 1.4: Screen locker for Wayland
 gui-libs/wlroots 0.6.0: Pluggable, composable, unopinionated modules for building a Wayland compositor
-gui-wm/sway 1.1_rc2: i3-compatible Wayland window manager
-net-p2p/transmission-remote-gtk 1.4.1: GTK+ client for management of the Transmission BitTorrent client, over HTTP RPC
+gui-wm/sway 1.1.1: i3-compatible Wayland window manager
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
