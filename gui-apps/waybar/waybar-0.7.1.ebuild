@@ -5,7 +5,7 @@ EAPI=6
 
 inherit meson
 
-DESCRIPTION="Highly customizable Wayland Polybar like bar"
+DESCRIPTION="Highly customizable Wayland bar for Sway and Wlroots based compositors."
 HOMEPAGE="https://github.com/Alexays/Waybar"
 SRC_URI="https://github.com/Alexays/Waybar/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
@@ -15,7 +15,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~s
 IUSE="+netlink pulseaudio +tray"
 
 RDEPEND="sys-libs/libcap
-	dev-libs/libfmt
+	>=dev-libs/libfmt-5.3.0
 	dev-libs/libinput
 	dev-libs/wayland
 	dev-cpp/gtkmm:3.0
