@@ -25,3 +25,32 @@
              raise Exception('Failed to retrieve the i3 or sway IPC socket path')
  
          if auto_reconnect:
+--- a/i3ipc/aio/connection.py	2019-08-27 19:49:01.411172371 +1000
++++ b/i3ipc/aio/connection.py	2019-08-27 19:50:59.169564132 +1000
+@@ -7,8 +7,6 @@
+ import os
+ import json
+ from typing import Optional, List, Tuple, Callable, Union
+-from Xlib import display, X
+-from Xlib.error import DisplayError
+ import struct
+ import socket
+ 
+@@ -182,17 +180,6 @@
+     if exists(socket_path):
+         return socket_path
+ 
+-    # next try the root window property
+-    try:
+-        d = display.Display()
+-        atom = d.get_atom('I3_SOCKET_PATH')
+-        root = d.screen().root
+-        prop = root.get_full_property(atom, X.AnyPropertyType)
+-        if prop and prop.value:
+-            socket_path = prop.value.decode()
+-    except DisplayError:
+-        pass
+-
+     if exists(socket_path):
+         return socket_path
+ 
