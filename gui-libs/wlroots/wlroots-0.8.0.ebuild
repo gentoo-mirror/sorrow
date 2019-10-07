@@ -18,7 +18,7 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="elogind icccm rootston systemd x11-backend X"
+IUSE="elogind icccm systemd x11-backend X"
 REQUIRED_USE="?? ( elogind systemd )"
 
 DEPEND="
@@ -57,7 +57,6 @@ src_configure() {
 		-Dxcb-icccm=$(usex icccm enabled disabled)
 		-Dxwayland=$(usex X enabled disabled)
 		-Dx11-backend=$(usex x11-backend enabled disabled)
-		$(meson_use rootston)
 		"-Dexamples=false"
 		"-Dwerror=false"
 	)
@@ -72,30 +71,7 @@ src_configure() {
 	meson_src_configure
 }
 
-src_install() {
-	if use rootston; then
-		dobin "${BUILD_DIR}"/rootston/rootston
-		newdoc rootston/rootston.ini.example rootston.ini
-	fi
-
-	meson_src_install
-}
-
 pkg_postinst() {
 	elog "You must be in the input group to allow your compositor"
 	elog "to access input devices via libinput."
-	if use rootston; then
-		elog ""
-		elog "You should copy (and decompress) the example configuration file"
-		elog "from ${EROOT:-${ROOT}}/usr/share/doc/${PF}/rootston.ini"
-		elog "to the working directory from where you launch rootston"
-		elog "(or pass the '-C path-to-config' option to rootston)."
-		if ! use systemd && ! use elogind; then
-			elog ""
-			elog "If you use ConsoleKit2, remember to launch rootston using:"
-			elog "exec ck-launch-session rootston"
-
-			fcaps_pkg_postinst
-		fi
-	fi
 }
