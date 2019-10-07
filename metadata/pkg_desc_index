@@ -8,7 +8,7 @@ gui-apps/swayidle 1.5: Idle management daemon for Wayland
 gui-apps/swaylock 1.4: Screen locker for Wayland
 gui-apps/waybar 0.8.0: Highly customizable Wayland bar for Sway and Wlroots based compositors.
 gui-apps/wev 9999: Wayland event viewer
-gui-libs/wlroots 0.7.0: Pluggable, composable, unopinionated modules for building a Wayland compositor
+gui-libs/wlroots 0.8.0: Pluggable, composable, unopinionated modules for building a Wayland compositor
 gui-wm/sway 1.2: i3-compatible Wayland window manager
 media-gfx/grim 9999: Grab images from a Wayland compositor
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
