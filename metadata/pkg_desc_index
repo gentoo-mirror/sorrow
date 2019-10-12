@@ -1,5 +1,6 @@
 app-accessibility/caribou 0.4.21: Input assistive technology intended for switch and pointer users
 dev-python/i3ipc 2.1.1: An improved Python library for i3wm extensions
+dev-vcs/mercurial 5.0.2: Scalable distributed SCM
 gui-apps/mako 1.4: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/plotinus 9999: A searchable command palette in every modern GTK+ application
 gui-apps/slurp 9999: Select a region in a Wayland compositor
@@ -8,6 +9,7 @@ gui-apps/swayidle 1.5: Idle management daemon for Wayland
 gui-apps/swaylock 1.4: Screen locker for Wayland
 gui-apps/waybar 0.8.0: Highly customizable Wayland bar for Sway and Wlroots based compositors.
 gui-apps/wev 9999: Wayland event viewer
+gui-apps/wofi 9999: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/wlroots 0.8.1: Pluggable, composable, unopinionated modules for building a Wayland compositor
 gui-wm/sway 1.2: i3-compatible Wayland window manager
 media-gfx/grim 9999: Grab images from a Wayland compositor

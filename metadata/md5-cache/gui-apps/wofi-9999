@@ -1,0 +1,13 @@
+BDEPEND=virtual/pkgconfig
+DEFINED_PHASES=compile configure install unpack
+DEPEND=dev-libs/wayland x11-libs/gtk+ dev-vcs/mercurial
+DESCRIPTION=Launcher/menu program for wlroots based wayland compositors such as sway
+EAPI=7
+HOMEPAGE=https://cloudninja.pw/docs/wofi.html
+KEYWORDS=~amd64
+LICENSE=GPL-3
+PROPERTIES=live
+RDEPEND=dev-libs/wayland x11-libs/gtk+
+SLOT=0
+_eclasses_=eutils	6e6c2737b59a4b982de6fb3ecefd87f8	mercurial	d22fe98ea362174612a57c233239102f
+_md5_=faedd0da8397cc7f4d4442c75b9fd965
