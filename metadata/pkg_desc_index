@@ -12,3 +12,4 @@ gui-libs/wlroots 0.8.1: Pluggable, composable, unopinionated modules for buildin
 gui-wm/sway 1.2: i3-compatible Wayland window manager
 media-gfx/grim 9999: Grab images from a Wayland compositor
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
+x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
