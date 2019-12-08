@@ -10,6 +10,7 @@ gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 9999: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/wlroots 0.8.1: Pluggable, composable, unopinionated modules for building a Wayland compositor
 gui-wm/sway 1.2: i3-compatible Wayland window manager
+mail-mta/hydroxide 0.2.11: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
