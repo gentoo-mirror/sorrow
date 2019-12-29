@@ -12,7 +12,7 @@ SRC_URI="https://github.com/Alexays/Waybar/archive/${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
-IUSE="+netlink pulseaudio +tray"
+IUSE="+netlink pulseaudio +tray mpd"
 
 RDEPEND="sys-libs/libcap
 	>=dev-libs/libfmt-5.3.0
@@ -24,7 +24,9 @@ RDEPEND="sys-libs/libcap
 	dev-libs/libsigc++
 	netlink? ( dev-libs/libnl )
 	pulseaudio? ( media-sound/pulseaudio )
+	mpd? ( media-libs/libmpdclient )
 	>=dev-libs/spdlog-1.3.1
+	gui-libs/gtk-layer-shell
 "
 DEPEND="${RDEPEND}
 	dev-libs/wayland-protocols
@@ -36,6 +38,8 @@ src_configure() {
 		-Dlibnl=$(usex netlink enabled disabled)
 		-Dpulseaudio=$(usex pulseaudio enabled disabled)
 		-Ddbusmenu-gtk=$(usex tray enabled disabled)
+		-Dmpd=$(usex mpd enabled disabled)
+		-Dgtk-layer-shell=enabled
 	)
 	meson_src_configure
 }
