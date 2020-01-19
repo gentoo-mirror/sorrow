@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-inherit mercurial
+inherit meson
 
 DESCRIPTION="Launcher/menu program for wlroots based wayland compositors such as sway"
 HOMEPAGE="https://cloudninja.pw/docs/wofi.html"
-EHG_REPO_URI="https://hg.sr.ht/~scoopta/wofi"
+SRC_URI="https://hg.sr.ht/~scoopta/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -19,17 +19,4 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 BDEPEND="virtual/pkgconfig"
-
-src_configure(){
-	true
-}
-
-src_compile(){
-	cd Release
-	emake
-}
-
-src_install(){
-	dobin Release/wofi
-	dodoc README.md
-}
+S="${WORKDIR}/${PN}-v${PV}"
