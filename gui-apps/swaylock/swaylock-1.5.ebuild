@@ -47,9 +47,6 @@ src_configure() {
 		"-Dbash-completions=true"
 		"-Dwerror=false"
 	)
-	if [[ ${PV} != 9999 ]]; then
-		emesonargs+=("-Dswaylock-version=${PV}")
-	fi
 
 	meson_src_configure
 }
