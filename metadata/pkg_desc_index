@@ -3,14 +3,14 @@ dev-vcs/mercurial 5.0.2: Scalable distributed SCM
 gui-apps/mako 1.4.1: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 9999: Select a region in a Wayland compositor
 gui-apps/swaybg 1.0: Screen locker for Wayland
-gui-apps/swayidle 1.5: Idle management daemon for Wayland
-gui-apps/swaylock 1.4: Screen locker for Wayland
+gui-apps/swayidle 1.6: Idle management daemon for Wayland
+gui-apps/swaylock 1.5: Screen locker for Wayland
 gui-apps/waybar 0.9.0: Highly customizable Wayland bar for Sway and Wlroots based compositors.
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.0: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/gtk-layer-shell 0.1.0: A library to create panels and other desktop components for Wayland
-gui-libs/wlroots 0.9.1: Pluggable, composable, unopinionated modules for building a Wayland compositor
-gui-wm/sway 1.3_rc3: i3-compatible Wayland window manager
+gui-libs/wlroots 0.10.0: Pluggable, composable, unopinionated modules for building a Wayland compositor
+gui-wm/sway 1.4: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.12: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
