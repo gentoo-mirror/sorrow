@@ -18,7 +18,7 @@ fi
 
 LICENSE="MIT"
 SLOT="0/8"
-IUSE="elogind icccm rdp systemd x11-backend X"
+IUSE="elogind icccm systemd x11-backend X"
 REQUIRED_USE="?? ( elogind systemd )"
 
 DEPEND="
@@ -31,7 +31,6 @@ DEPEND="
 	x11-libs/pixman
 	elogind? ( >=sys-auth/elogind-237 )
 	icccm? ( x11-libs/xcb-util-wm )
-	rdp? ( net-misc/freerdp )
 	systemd? ( >=sys-apps/systemd-237 )
 	x11-backend? ( x11-libs/libxcb:0= )
 	X? (
