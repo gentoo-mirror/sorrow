@@ -27,6 +27,7 @@ RDEPEND="sys-libs/libcap
 	mpd? ( media-libs/libmpdclient )
 	>=dev-libs/spdlog-1.3.1
 	gui-libs/gtk-layer-shell
+	dev-libs/date
 "
 DEPEND="${RDEPEND}
 	dev-libs/wayland-protocols
