@@ -27,6 +27,7 @@ src_prepare()
 src_configure()
 {
 	local mycmakeargs=(
+		"-DUSE_SYSTEM_TZ_DB=true"
 		"-DBUILD_TZ_LIB=true"
 		"-DBUILD_SHARED_LIBS=true"
 	)
