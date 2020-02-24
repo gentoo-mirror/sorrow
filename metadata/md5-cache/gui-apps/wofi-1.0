@@ -1,13 +1,13 @@
 BDEPEND=virtual/pkgconfig >=dev-util/meson-0.51.2 >=dev-util/ninja-1.8.2
-DEFINED_PHASES=compile configure install test
-DEPEND=dev-libs/wayland x11-libs/gtk+
+DEFINED_PHASES=compile configure install test unpack
+DEPEND=dev-libs/wayland x11-libs/gtk+ dev-vcs/mercurial
 DESCRIPTION=Launcher/menu program for wlroots based wayland compositors such as sway
 EAPI=7
 HOMEPAGE=https://cloudninja.pw/docs/wofi.html
 KEYWORDS=~amd64
 LICENSE=GPL-3
+PROPERTIES=live
 RDEPEND=dev-libs/wayland x11-libs/gtk+
 SLOT=0
-SRC_URI=https://hg.sr.ht/~scoopta/wofi/archive/v1.0.tar.gz -> wofi-1.0.tar.gz
-_eclasses_=meson	565447abb820cb005fd3a076bc631750	multilib	1d91b03d42ab6308b5f4f6b598ed110e	multiprocessing	cac3169468f893670dac3e7cb940e045	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-utils-r1	611c493a4cfef5254350fabc04b606f5	toolchain-funcs	512eb3367f507ebaa1d1d43ab7d66e6c
-_md5_=a71fcfdd137447a3462ad8ab8298d2dc
+_eclasses_=eutils	fcb2aa98e1948b835b5ae66ca52868c5	mercurial	d22fe98ea362174612a57c233239102f	meson	565447abb820cb005fd3a076bc631750	multilib	1d91b03d42ab6308b5f4f6b598ed110e	multiprocessing	cac3169468f893670dac3e7cb940e045	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-utils-r1	611c493a4cfef5254350fabc04b606f5	toolchain-funcs	512eb3367f507ebaa1d1d43ab7d66e6c
+_md5_=96e62ba981b47b234a8069740b0e6502
