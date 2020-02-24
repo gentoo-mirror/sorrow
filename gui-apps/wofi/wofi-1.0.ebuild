@@ -16,7 +16,7 @@ IUSE=""
 
 DEPEND="
 	dev-libs/wayland
-	x11-libs/gtk+
+	x11-libs/gtk+[wayland]
 "
 RDEPEND="${DEPEND}"
 BDEPEND="virtual/pkgconfig"
