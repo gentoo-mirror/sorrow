@@ -29,7 +29,7 @@ EGO_VENDOR=(
 	"gopkg.in/check.v1 788fd7840127 github.com/go-check/check"
 )
 
-inherit golang-base golang-build golang-vcs-snapshot
+inherit golang-base golang-build golang-vcs-snapshot systemd
 
 DESCRIPTION="A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge"
 HOMEPAGE="https://github.com/emersion/hydroxide"
@@ -45,10 +45,13 @@ src_prepare() {
 }
 
 src_compile() {
-	export EGO_PN="github.com/emersion/${PN}/cmd/${PN}"
+	EGO_PN="github.com/emersion/${PN}/cmd/${PN}"
 	golang-build_src_compile
 }
 
 src_install() {
 	dobin hydroxide
+	systemd_douserunit "${FILESDIR}/${PN}.service"
+	dodoc "src/github.com/emersion/${PN}/README.md"
+	dodoc "src/github.com/emersion/${PN}/LICENSE"
 }
