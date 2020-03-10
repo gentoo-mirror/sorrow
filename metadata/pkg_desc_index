@@ -11,7 +11,7 @@ gui-apps/waybar 0.9.1: Highly customizable Wayland bar for Sway and Wlroots base
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.1.1: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/gtk-layer-shell 0.1.0: A library to create panels and other desktop components for Wayland
-gui-libs/wlroots 0.10.0: Pluggable, composable, unopinionated modules for building a Wayland compositor
+gui-libs/wlroots 0.10.1: Pluggable, composable, unopinionated modules for building a Wayland compositor
 gui-wm/sway 1.4: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.14: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
