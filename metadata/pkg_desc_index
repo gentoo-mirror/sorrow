@@ -1,6 +1,6 @@
 dev-libs/date 2.4.1_p20200125: A date and time library based on the C++11/14/17 <chrono> header
 dev-python/feedparser 5.2.1: Parse RSS and Atom feeds in Python
-dev-python/i3ipc 2.1.1: An improved Python library for i3wm extensions
+dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
 dev-vcs/mercurial 5.2.2-r1: Scalable distributed SCM
 gui-apps/mako 1.4.1: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 9999: Select a region in a Wayland compositor
