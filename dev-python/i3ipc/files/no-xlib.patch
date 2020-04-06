@@ -97,3 +97,9 @@
  
      @property
      def socket_path(self) -> str:
+--- a/i3ipc/_private/__init__.py	2020-04-06 21:35:40.648069848 +1000
++++ b/i3ipc/_private/__init__.py	2020-04-06 21:35:58.837455568 +1000
+@@ -1,3 +1,2 @@
+ from .pubsub import PubSub
+ from .types import MessageType, ReplyType, EventType
+-from .sync import Synchronizer
