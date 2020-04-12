@@ -6,7 +6,7 @@ gui-apps/slurp 9999: Select a region in a Wayland compositor
 gui-apps/swaybg 1.0: Screen locker for Wayland
 gui-apps/swayidle 1.6: Idle management daemon for Wayland
 gui-apps/swaylock 1.5: Screen locker for Wayland
-gui-apps/waybar 0.9.1: Highly customizable Wayland bar for Sway and Wlroots based compositors.
+gui-apps/waybar 0.9.2: Highly customizable Wayland bar for Sway and Wlroots based compositors.
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.1.2: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/gtk-layer-shell 0.1.0: A library to create panels and other desktop components for Wayland
