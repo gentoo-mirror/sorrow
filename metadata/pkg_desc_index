@@ -16,3 +16,4 @@ mail-mta/hydroxide 0.2.14: A third-party, open-source ProtonMail CardDAV, IMAP a
 media-gfx/grim 9999: Grab images from a Wayland compositor
 media-sound/quodlibet 4.2.1: audio library tagger, manager, and player for GTK+
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
+x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
