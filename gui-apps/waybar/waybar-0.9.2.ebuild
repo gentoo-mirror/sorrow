@@ -1,45 +1,62 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit meson
 
 DESCRIPTION="Highly customizable Wayland bar for Sway and Wlroots based compositors."
 HOMEPAGE="https://github.com/Alexays/Waybar"
-SRC_URI="https://github.com/Alexays/Waybar/archive/${PV}.tar.gz -> ${P}.tar.gz"
+
+if [[ ${PV} == 9999 ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="https://github.com/Alexays/${PN^}.git"
+else
+	SRC_URI="https://github.com/Alexays/${PN^}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64"
+fi
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
-IUSE="+netlink pulseaudio +tray mpd"
+IUSE="mpd +network pulseaudio +tray +udev"
 
-RDEPEND="sys-libs/libcap
-	>=dev-libs/libfmt-5.3.0
-	dev-libs/libinput
-	dev-libs/wayland
+BDEPEND="
+	>=app-text/scdoc-1.9.2
+	virtual/pkgconfig
+"
+
+DEPEND="
 	dev-cpp/gtkmm:3.0
-	tray? ( dev-libs/libdbusmenu[gtk3] )
-	dev-libs/jsoncpp
-	dev-libs/libsigc++
-	netlink? ( dev-libs/libnl )
-	pulseaudio? ( media-sound/pulseaudio )
-	mpd? ( media-libs/libmpdclient )
-	>=dev-libs/spdlog-1.3.1
+	dev-libs/jsoncpp:=
+	dev-libs/libinput:=
+	dev-libs/libsigc++:2
+	>=dev-libs/libfmt-5.3.0:=
+	>=dev-libs/spdlog-1.3.1:=
+	dev-libs/wayland
+	dev-libs/wayland-protocols
+	gui-libs/wlroots
 	gui-libs/gtk-layer-shell
 	dev-libs/date
+	mpd? ( media-libs/libmpdclient )
+	network? ( dev-libs/libnl:3 )
+	pulseaudio? ( media-sound/pulseaudio )
+	tray? ( dev-libs/libdbusmenu[gtk3] )
+	udev? ( virtual/libudev:= )
 "
-DEPEND="${RDEPEND}
-	dev-libs/wayland-protocols
-"
-S=${WORKDIR}/Waybar-${PV}
+
+RDEPEND="${DEPEND}"
+
+if [[ ${PV} != 9999 ]]; then
+	S="${WORKDIR}/${PN^}-${PV}"
+fi
 
 src_configure() {
 	local emesonargs=(
-		-Dlibnl=$(usex netlink enabled disabled)
-		-Dpulseaudio=$(usex pulseaudio enabled disabled)
-		-Ddbusmenu-gtk=$(usex tray enabled disabled)
-		-Dmpd=$(usex mpd enabled disabled)
+		$(meson_feature mpd)
+		$(meson_feature network libnl)
+		$(meson_feature pulseaudio)
+		$(meson_feature tray dbusmenu-gtk)
+		$(meson_feature udev libudev)
 		-Dgtk-layer-shell=enabled
 	)
 	meson_src_configure
