@@ -1,6 +1,5 @@
 dev-libs/date 2.4.1_p20200125: A date and time library based on the C++11/14/17 <chrono> header
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
-dev-python/python-mpd 1.0.0: Python MPD client library
 gui-apps/mako 1.4.1: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 9999: Select a region in a Wayland compositor
 gui-apps/swaybg 1.0: Screen locker for Wayland
@@ -14,6 +13,5 @@ gui-libs/wlroots 0.10.1: Pluggable, composable, unopinionated modules for buildi
 gui-wm/sway 1.4: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.14: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
-media-sound/sonata 1.7_beta1_p20200212: Elegant GTK+ music client for the Music Player Daemon (MPD)
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
