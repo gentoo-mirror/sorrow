@@ -12,5 +12,6 @@ gui-libs/wlroots 0.10.1: Pluggable, composable, unopinionated modules for buildi
 gui-wm/sway 1.4: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.14: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
+sys-auth/polkit 0.116-r1: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
