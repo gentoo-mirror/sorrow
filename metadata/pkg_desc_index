@@ -1,4 +1,4 @@
-dev-libs/date 2.4.1_p20200125: A date and time library based on the C++11/14/17 <chrono> header
+dev-libs/date 3.0.0: A date and time library based on the C++11/14/17 <chrono> header
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
 gui-apps/mako 1.4.1: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 9999: Select a region in a Wayland compositor
