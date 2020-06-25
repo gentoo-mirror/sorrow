@@ -3,14 +3,18 @@
 
 EAPI=7
 
-inherit fcaps meson git-r3
+inherit fcaps meson
 
 DESCRIPTION="Pluggable, composable, unopinionated modules for building a Wayland compositor"
 HOMEPAGE="https://github.com/swaywm/wlroots"
 
-EGIT_REPO_URI="https://github.com/swaywm/${PN}.git"
-EGIT_COMMIT="9e68ed21599661f75f3b73e3e698ab8828341a18"
-KEYWORDS="amd64 arm64 x86"
+if [[ ${PV} == 9999 ]]; then
+	EGIT_REPO_URI="https://github.com/swaywm/${PN}.git"
+	inherit git-r3
+else
+	SRC_URI="https://github.com/swaywm/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="amd64 arm64 x86"
+fi
 
 LICENSE="MIT"
 SLOT="0/8"
