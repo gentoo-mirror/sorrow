@@ -37,6 +37,7 @@ DEPEND="
 	gui-libs/wlroots
 	gui-libs/gtk-layer-shell
 	dev-libs/date
+	dev-util/gdbus-codegen
 	mpd? ( media-libs/libmpdclient )
 	network? ( dev-libs/libnl:3 )
 	pulseaudio? ( media-sound/pulseaudio )
