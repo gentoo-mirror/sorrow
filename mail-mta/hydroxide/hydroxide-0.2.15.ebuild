@@ -22,7 +22,7 @@ EGO_VENDOR=(
 	"github.com/kr/pretty v0.1.0"
 	"github.com/martinlindhe/base36 v1.0.0"
 	"github.com/stretchr/testify v1.4.0"
-	"golang.org/x/crypto 2aa609cf4a9d github.com/golang/crypto"
+	"golang.org/x/crypto 11f6ee2dd602 github.com/ProtonMail/crypto"
 	"golang.org/x/net eb5bcb51f2a3 github.com/golang/net"
 	"golang.org/x/sys d5e6a3e2c0ae github.com/golang/sys"
 	"golang.org/x/text v0.3.2 github.com/golang/text"
