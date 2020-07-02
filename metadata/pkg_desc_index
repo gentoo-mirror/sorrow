@@ -10,7 +10,7 @@ gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.1.2: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/wlroots 0.10.1: Pluggable, composable, unopinionated modules for building a Wayland compositor
 gui-wm/sway 1.5_rc1: i3-compatible Wayland window manager
-mail-mta/hydroxide 0.2.14: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
+mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
 media-video/pipewire 0.3.4: Multimedia processing graphs
 sys-apps/xdg-desktop-portal 1.7.2: Desktop integration portal
