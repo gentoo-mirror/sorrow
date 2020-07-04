@@ -12,8 +12,6 @@ gui-libs/wlroots 0.10.1: Pluggable, composable, unopinionated modules for buildi
 gui-wm/sway 1.5_rc1: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
-media-video/pipewire 0.3.4: Multimedia processing graphs
-sys-apps/xdg-desktop-portal 1.7.2: Desktop integration portal
 sys-apps/xdg-desktop-portal-gtk 1.7.1: GTK/GNOME backend for xdg-desktop-portal
 sys-apps/xdg-desktop-portal-wlr 0.1.0: xdg-desktop-portal backend for wlroots
 sys-auth/polkit 0.116-r1: Policy framework for controlling privileges for system-wide services
