@@ -13,9 +13,9 @@ if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/swaywm/${PN}.git"
 else
 	MY_PV=${PV/_rc/-rc}
-	SRC_URI="https://github.com/swaywm/${PN}/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="amd64 arm64 x86"
-	S="${WORKDIR}/${PN}-${MY_PV}"
+	SRC_URI="https://github.com/swaywm/${PN}/releases/download/v${MY_PV}/${PN}-v${MY_PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+	S="${WORKDIR}/${PN}-v${MY_PV}"
 fi
 
 LICENSE="MIT"
@@ -44,7 +44,7 @@ DEPEND="
 if [[ ${PV} == 9999 ]]; then
 	DEPEND+="~gui-libs/wlroots-9999:=[elogind=,systemd=,X=]"
 else
-	DEPEND+=">=gui-libs/wlroots-9999:=[elogind=,systemd=,X=]"
+	DEPEND+="~gui-libs/wlroots-9999:=[elogind=,systemd=,X=]"
 fi
 RDEPEND="
 	x11-misc/xkeyboard-config
