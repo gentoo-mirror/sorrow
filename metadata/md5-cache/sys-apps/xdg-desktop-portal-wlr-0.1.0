@@ -1,4 +1,4 @@
-BDEPEND=virtual/pkgconfig >=sys-devel/gettext-0.18.3 >=dev-util/meson-0.51.2 >=dev-util/ninja-1.8.2
+BDEPEND=virtual/pkgconfig >=sys-devel/gettext-0.18.3 >=dev-util/meson-0.54.0 >=dev-util/ninja-1.8.2
 DEFINED_PHASES=compile configure install test
 DEPEND=>=media-video/pipewire-0.3 dev-libs/wayland >=dev-libs/wayland-protocols-1.14 >=sys-apps/xdg-desktop-portal-1.7.0 systemd? ( sys-apps/systemd ) elogind? ( sys-auth/elogind )
 DESCRIPTION=xdg-desktop-portal backend for wlroots
@@ -11,5 +11,5 @@ RDEPEND=>=media-video/pipewire-0.3 dev-libs/wayland >=dev-libs/wayland-protocols
 REQUIRED_USE=?? ( systemd elogind )
 SLOT=0
 SRC_URI=https://github.com/emersion/xdg-desktop-portal-wlr/releases/download/v0.1.0/xdg-desktop-portal-wlr-0.1.0.tar.gz
-_eclasses_=meson	8f7dc8ed2d76af0b33328789c017e677	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	cac3169468f893670dac3e7cb940e045	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-utils-r1	cae3d65c47270c9a8c4880076996c09c	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_eclasses_=meson	71d293a701d6362387e1214da368c848	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	cac3169468f893670dac3e7cb940e045	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-utils-r1	cae3d65c47270c9a8c4880076996c09c	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=5eb8501bbebbdec4bbe40baab89ccca0
