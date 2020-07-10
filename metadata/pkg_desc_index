@@ -9,11 +9,11 @@ gui-apps/waybar 0.9.2: Highly customizable Wayland bar for Sway and Wlroots base
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.1.2: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/wlroots 0.10.1: Pluggable, composable, unopinionated modules for building a Wayland compositor
+gui-libs/xdg-desktop-portal-wlr 0.1.0: xdg-desktop-portal backend for wlroots
 gui-wm/sway 1.5_rc2: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
 sys-apps/xdg-desktop-portal-gtk 1.7.1: GTK/GNOME backend for xdg-desktop-portal
-sys-apps/xdg-desktop-portal-wlr 0.1.0: xdg-desktop-portal backend for wlroots
 sys-auth/polkit 0.116-r1: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
