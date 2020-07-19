@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 PYTHON_COMPAT=( python3_{7,8} )
 
 inherit systemd autotools eutils gnome2-utils python-r1
@@ -14,23 +14,24 @@ S="${WORKDIR}/${PN}-v${PV}"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
-IUSE="appindicator geoclue gtk nls"
+IUSE="appindicator geoclue gtk nls wayland"
 
-COMMON_DEPEND=">=x11-libs/libX11-1.4
+BDEPEND="${COMMON_DEPEND}
+	>=dev-util/intltool-0.50
+	nls? ( sys-devel/gettext )
+"
+DEPEND=">=x11-libs/libX11-1.4
 	x11-libs/libXxf86vm
 	x11-libs/libxcb
 	x11-libs/libdrm
 	appindicator? ( dev-libs/libappindicator:3[introspection] )
 	geoclue? ( app-misc/geoclue:2.0 dev-libs/glib:2 )
-	gtk? ( ${PYTHON_DEPS} )"
-RDEPEND="${COMMON_DEPEND}
+	gtk? ( ${PYTHON_DEPS} )
+	wayland? ( >=dev-libs/wayland-1.15.0 )"
+RDEPEND="${DEPEND}
 	gtk? ( dev-python/pygobject[${PYTHON_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 		dev-python/pyxdg[${PYTHON_USEDEP}] )"
-DEPEND="${COMMON_DEPEND}
-	>=dev-util/intltool-0.50
-	nls? ( sys-devel/gettext )
-"
 REQUIRED_USE="gtk? ( ${PYTHON_REQUIRED_USE} )"
 
 src_prepare() {
@@ -49,6 +50,7 @@ src_configure() {
 		--enable-vidmode \
 		$(use_enable geoclue geoclue2) \
 		$(use_enable gtk gui) \
+		$(use_enable wayland) \
 		--with-systemduserunitdir="$(systemd_get_userunitdir)" \
 		--enable-apparmor
 }
