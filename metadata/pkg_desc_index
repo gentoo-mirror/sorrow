@@ -1,5 +1,6 @@
 dev-libs/date 3.0.0: A date and time library based on the C++11/14/17 <chrono> header
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
+gui-apps/gammastep 2.0: A screen color temperature adjusting software
 gui-apps/mako 1.4.1: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 9999: Select a region in a Wayland compositor
 gui-apps/swaybg 1.0: Screen locker for Wayland
