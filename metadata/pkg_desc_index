@@ -16,6 +16,6 @@ gui-wm/sway 1.5: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
 sys-apps/xdg-desktop-portal-gtk 1.7.1: GTK/GNOME backend for xdg-desktop-portal
-sys-auth/polkit 0.116-r1: Policy framework for controlling privileges for system-wide services
+sys-auth/polkit 0.117: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
