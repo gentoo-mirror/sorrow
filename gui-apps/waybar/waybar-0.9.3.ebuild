@@ -35,8 +35,8 @@ DEPEND="
 	dev-libs/wayland
 	dev-libs/wayland-protocols
 	gui-libs/wlroots
-	gui-libs/gtk-layer-shell
-	dev-libs/date
+	>=gui-libs/gtk-layer-shell-0.2.0
+	>=dev-libs/date-3.0.0
 	dev-util/gdbus-codegen
 	mpd? ( media-libs/libmpdclient )
 	network? ( dev-libs/libnl:3 )
