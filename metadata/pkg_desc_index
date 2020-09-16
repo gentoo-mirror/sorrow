@@ -15,7 +15,8 @@ gui-libs/xdg-desktop-portal-wlr 0.1.0: xdg-desktop-portal backend for wlroots
 gui-wm/sway 1.5: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
-sys-apps/xdg-desktop-portal-gtk 1.7.1: GTK/GNOME backend for xdg-desktop-portal
+sys-apps/xdg-desktop-portal 1.8.0: Desktop integration portal
+sys-apps/xdg-desktop-portal-gtk 1.8.0: portal backend implementation that is using GTK+ and various pieces of GNOME
 sys-auth/polkit 0.117: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
