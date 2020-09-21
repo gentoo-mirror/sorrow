@@ -3,16 +3,11 @@ dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
 gui-apps/gammastep 2.0: A screen color temperature adjusting software
 gui-apps/mako 1.4.1: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 9999: Select a region in a Wayland compositor
-gui-apps/swaybg 1.0: Screen locker for Wayland
-gui-apps/swayidle 1.6: Idle management daemon for Wayland
-gui-apps/swaylock 1.5: Screen locker for Wayland
-gui-apps/waybar 0.9.3: Highly customizable Wayland bar for Sway and Wlroots based compositors.
+gui-apps/waybar 0.9.4: Highly customizable Wayland bar for Sway and Wlroots based compositors.
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.1.2: Launcher/menu program for wlroots based wayland compositors such as sway
 gui-libs/gtk-layer-shell 0.2.0: Library to create desktop components for Wayland using the Layer Shell protocol
-gui-libs/wlroots 0.11.0: Pluggable, composable, unopinionated modules for building a Wayland compositor
 gui-libs/xdg-desktop-portal-wlr 0.1.0: xdg-desktop-portal backend for wlroots
-gui-wm/sway 1.5: i3-compatible Wayland window manager
 mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
 sys-apps/xdg-desktop-portal 1.8.0: Desktop integration portal
