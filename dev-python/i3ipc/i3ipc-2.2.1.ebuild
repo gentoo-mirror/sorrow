@@ -4,12 +4,12 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_6,3_7,3_8} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 
 inherit distutils-r1
 
 DESCRIPTION="An improved Python library for i3wm extensions"
-HOMEPAGE="https://github.com/acrisci/i3ipc-python"
+HOMEPAGE="https://github.com/altdesktop/i3ipc-python"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 IUSE="X"
