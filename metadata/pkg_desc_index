@@ -12,6 +12,6 @@ mail-mta/hydroxide 0.2.15: A third-party, open-source ProtonMail CardDAV, IMAP a
 media-gfx/grim 9999: Grab images from a Wayland compositor
 sys-apps/xdg-desktop-portal 1.8.0: Desktop integration portal
 sys-apps/xdg-desktop-portal-gtk 1.8.0: portal backend implementation that is using GTK+ and various pieces of GNOME
-sys-auth/polkit 0.118: Policy framework for controlling privileges for system-wide services
+sys-auth/polkit 0.118-r1: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
