@@ -1,8 +1,54 @@
+diff --git a/Makefile.am b/Makefile.am
+index 6060263..dc0768f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -10,6 +10,10 @@ NULL =
+ 
+ EXTRA_DIST = 			\
+ 	HACKING 		\
++	meson.build		\
++	meson_options.txt	\
++	meson_post_install.py	\
++	po/meson.build		\
+ 	$(NULL)
+ 
+ # xsltproc barfs on 'make distcheck'; disable for now
+diff --git a/actions/Makefile.am b/actions/Makefile.am
+index 4498f4a..1709992 100644
+--- a/actions/Makefile.am
++++ b/actions/Makefile.am
+@@ -13,6 +13,9 @@ clean-local :
+ 
+ DISTCLEANFILES = org.freedesktop.policykit.policy
+ 
+-EXTRA_DIST = org.freedesktop.policykit.policy.in
++EXTRA_DIST =					\
++	org.freedesktop.policykit.policy.in	\
++	meson.build				\
++	$(NULL)
+ 
+ -include $(top_srcdir)/git.mk
+diff --git a/actions/meson.build b/actions/meson.build
+new file mode 100644
+index 0000000..26d2d2d
+--- /dev/null
++++ b/actions/meson.build
+@@ -0,0 +1,10 @@
++policy = 'org.freedesktop.policykit.policy'
++
++custom_target(
++  policy,
++  input: policy + '.in',
++  output: '@BASENAME@',
++  command: intltool_xml_cmd,
++  install: true,
++  install_dir: pk_pkgactiondir,
++)
 diff --git a/configure.ac b/configure.ac
-index 5cedb4eca980f050fb5855ab577e93100adf8fec..6c274869f39d4b65b08f7cdb9e461b5182d297ec 100644
+index 4ac2219..d51cfbd 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -79,11 +79,22 @@ PKG_CHECK_MODULES(GLIB, [gmodule-2.0 gio-unix-2.0 >= 2.30.0])
+@@ -80,11 +80,22 @@ PKG_CHECK_MODULES(GLIB, [gmodule-2.0 gio-unix-2.0 >= 2.30.0])
  AC_SUBST(GLIB_CFLAGS)
  AC_SUBST(GLIB_LIBS)
  
@@ -20,7 +66,7 @@ index 5cedb4eca980f050fb5855ab577e93100adf8fec..6c274869f39d4b65b08f7cdb9e461b51
 +  AC_SUBST(LIBJS_CFLAGS)
 +  AC_SUBST(LIBJS_LIBS)
 +], [
-+  PKG_CHECK_MODULES(LIBJS, [mozjs-60])
++  PKG_CHECK_MODULES(LIBJS, [mozjs-78])
 +
 +  AC_SUBST(LIBJS_CFLAGS)
 +  AC_SUBST(LIBJS_CXXFLAGS)
@@ -30,7 +76,7 @@ index 5cedb4eca980f050fb5855ab577e93100adf8fec..6c274869f39d4b65b08f7cdb9e461b51
  
  EXPAT_LIB=""
  AC_ARG_WITH(expat, [  --with-expat=<dir>      Use expat from here],
-@@ -580,6 +591,13 @@ echo "
+@@ -581,6 +592,13 @@ echo "
          PAM support:                ${have_pam}
          systemdsystemunitdir:       ${systemdsystemunitdir}
          polkitd user:               ${POLKITD_USER}"
@@ -44,8 +90,1242 @@ index 5cedb4eca980f050fb5855ab577e93100adf8fec..6c274869f39d4b65b08f7cdb9e461b51
  
  if test "$have_pam" = yes ; then
  echo "
+diff --git a/data/Makefile.am b/data/Makefile.am
+index 7c53902..f5ee4ba 100644
+--- a/data/Makefile.am
++++ b/data/Makefile.am
+@@ -57,6 +57,7 @@ CLEANFILES = $(BUILT_SOURCES)
+ EXTRA_DIST = 							\
+ 	org.freedesktop.PolicyKit1.Authority.xml 		\
+ 	org.freedesktop.PolicyKit1.AuthenticationAgent.xml 	\
++	meson.build						\
+ 	$(service_in_files) 					\
+ 	$(dbusconf_in_files) 					\
+ 	$(systemdservice_in_files) 				\
+diff --git a/data/meson.build b/data/meson.build
+new file mode 100644
+index 0000000..14c100b
+--- /dev/null
++++ b/data/meson.build
+@@ -0,0 +1,47 @@
++service_conf = {'libprivdir': pk_prefix / pk_pkglibdir}
++
++configure_file(
++  input: 'org.freedesktop.PolicyKit1.service.in',
++  output: '@BASENAME@',
++  configuration: service_conf,
++  install: true,
++  install_dir: dbus_system_bus_services_dir,
++)
++
++configure_file(
++  input: 'org.freedesktop.PolicyKit1.conf.in',
++  output: '@BASENAME@',
++  configuration: {'polkitd_user': polkitd_user},
++  install: true,
++  install_dir: dbus_policydir,
++)
++
++if enable_pam
++  configure_file(
++    input: 'polkit-1.in',
++    output: '@BASENAME@',
++    configuration: pam_conf,
++    install: true,
++    install_dir: pk_sysconfdir / 'pam.d',
++  )
++endif
++
++its_data = files(
++  'polkit.its',
++  'polkit.loc',
++)
++
++install_data(
++  its_data,
++  install_dir: pk_datadir / 'gettext/its',
++)
++
++if enable_logind
++  configure_file(
++    input: 'polkit.service.in',
++    output: '@BASENAME@',
++    configuration: service_conf,
++    install: true,
++    install_dir: systemd_systemdsystemunitdir,
++  )
++endif
+diff --git a/docs/Makefile.am b/docs/Makefile.am
+index 8d7da9d..3c285e4 100644
+--- a/docs/Makefile.am
++++ b/docs/Makefile.am
+@@ -1,6 +1,9 @@
+ 
+ SUBDIRS = man polkit
+ 
+-EXTRA_DIST = version.xml.in
++EXTRA_DIST =		\
++	version.xml.in	\
++	meson.build	\
++	$(NULL)
+ 
+ -include $(top_srcdir)/git.mk
+diff --git a/docs/man/Makefile.am b/docs/man/Makefile.am
+index 0b2dc44..38e037e 100644
+--- a/docs/man/Makefile.am
++++ b/docs/man/Makefile.am
+@@ -24,6 +24,7 @@ EXTRA_DIST = 				\
+ 	pkcheck.xml			\
+ 	pkaction.xml			\
+ 	pkttyagent.xml			\
++	meson.build			\
+ 	$(NULL)
+ 
+ clean-local:
+diff --git a/docs/man/meson.build b/docs/man/meson.build
+new file mode 100644
+index 0000000..241e82c
+--- /dev/null
++++ b/docs/man/meson.build
+@@ -0,0 +1,36 @@
++xsltproc = find_program('xsltproc', required: false)
++assert(xsltproc.found(), 'xsltproc is required for man pages generation')
++
++xsltproc_cmd = [
++  xsltproc,
++  '--output', '@OUTPUT@',
++  '--nonet',
++  '--stringparam', 'man.base.url.for.relative.links', pk_api_docpath + '/',
++  'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl',
++  '@INPUT@',
++]
++
++mans = [
++  ['polkit', '8'],
++  ['polkitd', '8'],
++  ['pkexec', '1'],
++  ['pkcheck', '1'],
++  ['pkaction', '1'],
++  ['pkttyagent', '1'],
++]
++
++foreach man: mans
++  xml = files(man[0] + '.xml')
++  content_files += xml
++
++  output = '@0@.@1@'.format(man[0], man[1])
++
++  custom_target(
++    output,
++    input: xml,
++    output: output,
++    command: xsltproc_cmd,
++    install: true,
++    install_dir: pk_mandir / ('man' + man[1]),
++  )
++endforeach
+diff --git a/docs/meson.build b/docs/meson.build
+new file mode 100644
+index 0000000..d4a0548
+--- /dev/null
++++ b/docs/meson.build
+@@ -0,0 +1,29 @@
++pk_api_docpath = pk_prefix / gnome.gtkdoc_html_dir(pk_api_name)
++
++enable_man = get_option('man')
++if enable_man
++  subdir('man')
++endif
++
++enable_gtk_doc = get_option('gtk_doc')
++if enable_gtk_doc
++  content_files += configure_file(
++    input: 'extensiondir.xml.in',
++    output: '@BASENAME@',
++    configuration: {'libdir': pk_prefix / pk_libdir},
++  )
++
++  content_files += configure_file(
++    input: 'version.xml.in',
++    output: '@BASENAME@',
++    configuration: {'VERSION': pk_version},
++  )
++
++  html_images = files(
++    'polkit-architecture.png',
++    'polkit-authentication-agent-example.png',
++    'polkit-authentication-agent-example-wheel.png',
++  )
++
++  subdir('polkit')
++endif
+diff --git a/docs/polkit/Makefile.am b/docs/polkit/Makefile.am
+index 1fce92c..2da0192 100644
+--- a/docs/polkit/Makefile.am
++++ b/docs/polkit/Makefile.am
+@@ -86,6 +86,8 @@ else
+ CLEANFILES =
+ endif
+ 
++EXTRA_DIST = meson.build
++
+ CLEANFILES +=   *~				\
+ 		polkit-1-scan.*			\
+ 		polkit-1.args			\
+diff --git a/docs/polkit/meson.build b/docs/polkit/meson.build
+new file mode 100644
+index 0000000..297a261
+--- /dev/null
++++ b/docs/polkit/meson.build
+@@ -0,0 +1,30 @@
++doc_module = pk_api_name
++
++src_dirs = [
++  source_root / 'src/polkit',
++  source_root / 'src/polkitagent',
++]
++
++private_headers = [
++  'polkitagenthelperprivate.h',
++  'polkitprivate.h',
++]
++
++content_files += files(
++  'docbook-interface-org.freedesktop.PolicyKit1.AuthenticationAgent.xml',
++  'docbook-interface-org.freedesktop.PolicyKit1.Authority.xml',
++)
++
++gnome.gtkdoc(
++  doc_module,
++  main_xml: doc_module + '-docs.xml',
++  src_dir: src_dirs,
++  ignore_headers: private_headers,
++  dependencies: libpolkit_agent_dep,
++  namespace: meson.project_name(),
++  html_assets: html_images,
++  fixxref_args: '--html-dir=' + pk_api_docpath,
++  gobject_typesfile: files(doc_module + '.types'),
++  content_files: content_files,
++  install: true,
++)
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 0000000..75513c2
+--- /dev/null
++++ b/meson.build
+@@ -0,0 +1,373 @@
++project(
++  'polkit', ['c', 'cpp'],
++  version: '0.117',
++  license: 'LGPL2+',
++  default_options: [
++    'buildtype=debugoptimized',
++    'prefix=/usr',
++    'cpp_std=c++17',
++  ],
++  meson_version: '>= 0.50.0',
++)
++
++pk_version = meson.project_version()
++
++pk_api_version = '1'
++pk_api_name = '@0@-@1@'.format(meson.project_name(), pk_api_version)
++
++pk_gir_ns = 'Polkit'
++pk_gir_version = '1.0'
++
++pk_prefix = get_option('prefix')
++pk_datadir = get_option('datadir')
++pk_includedir = get_option('includedir')
++pk_libdir = get_option('libdir')
++pk_mandir = get_option('mandir')
++pk_sysconfdir = get_option('sysconfdir')
++
++pk_pkgdatadir = pk_datadir / pk_api_name
++pk_pkgincludedir = pk_includedir / pk_api_name
++pk_pkglibdir = pk_libdir / pk_api_name
++pk_pkgsysconfdir = pk_sysconfdir / pk_api_name
++
++pk_actiondir = pk_api_name / 'actions'
++pk_pkgactiondir = pk_datadir / pk_actiondir
++
++soversion = 0
++current = 0
++revision = 0
++libversion = '@0@.@1@.@2@'.format(soversion, current, revision)
++
++gnome = import('gnome')
++i18n = import('i18n')
++pkg = import('pkgconfig')
++
++source_root = meson.current_source_dir()
++build_root = meson.current_build_dir()
++
++data_dir = source_root / 'data'
++po_dir = source_root / 'po'
++
++intltool_merge = find_program('intltool-merge')
++intltool_cache = po_dir / '.intltool-merge-cache'
++intltool_desktop_cmd = [intltool_merge, '-d', '-u', '-c', intltool_cache, po_dir, '@INPUT@', '@OUTPUT@']
++intltool_xml_cmd = [intltool_merge, '-x', '-u', '-c', intltool_cache, po_dir, '@INPUT@', '@OUTPUT@']
++
++top_inc = include_directories('.')
++
++cc = meson.get_compiler('c')
++
++config_h = configuration_data()
++
++# defines
++set_defines = [
++  # package
++  ['PACKAGE_BUGREPORT', 'http://lists.freedesktop.org/mailman/listinfo/polkit-devel'],
++  ['PACKAGE_NAME', meson.project_name()],
++  ['PACKAGE_URL', 'http://www.freedesktop.org/wiki/Software/polkit'],
++  ['PACKAGE_VERSION', pk_version],
++  ['VERSION', pk_version],
++  # i18n
++  ['GETTEXT_PACKAGE', pk_api_name],
++]
++
++foreach define: set_defines
++  config_h.set_quoted(define[0], define[1])
++endforeach
++
++# Globally define_GNU_SOURCE and therefore enable the GNU extensions
++config_h.set('_GNU_SOURCE', true)
++
++# functions
++check_functions = [
++  'clearenv',
++  'fdatasync',
++]
++
++foreach func: check_functions
++  config_h.set('HAVE_' + func.to_upper(), cc.has_function(func))
++endforeach
++
++# compiler flags
++common_c_flags = [
++  # FIXME: this should go as 'c_std=c99' in project's default_options.
++  #        https://github.com/mesonbuild/meson/issues/1889
++  #        https://github.com/mesonbuild/meson/pull/6729
++  '-std=c99',
++  '-DHAVE_CONFIG_H',
++]
++compiler_flags = []
++compiler_c_flags = []
++
++if get_option('buildtype').contains('debug')
++  compiler_c_flags += cc.get_supported_arguments([
++    '-Waggregate-return',
++    '-Wdeclaration-after-statement',
++    '-Wformat=2',
++    '-Wimplicit-function-declaration',
++    '-Winit-self',
++    '-Wmissing-declarations',
++    '-Wmissing-include-dirs',
++    '-Wmissing-prototypes',
++    '-Wstrict-prototypes',
++  ])
++endif
++
++add_project_arguments(common_c_flags + compiler_c_flags, language: 'c')
++
++glib_req_version = '>= 2.30.0'
++
++gio_dep = dependency('gio-2.0', version: glib_req_version)
++gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
++glib_dep = dependency('glib-2.0', version: glib_req_version)
++gobject_dep = dependency('gobject-2.0', version: glib_req_version)
++
++expat_dep = dependency('expat')
++assert(cc.has_header('expat.h', dependencies: expat_dep), 'Can\'t find expat.h. Please install expat.')
++assert(cc.has_function('XML_ParserCreate', dependencies: expat_dep), 'Can\'t find expat library. Please install expat.')
++
++js_engine = get_option('js_engine')
++if js_engine == 'duktape'
++  js_dep = dependency('duktape')
++  libm_dep = cc.find_library('m')
++elif js_engine == 'mozjs'
++  js_dep = dependency('mozjs-78')
++endif
++
++dbus_dep = dependency('dbus-1')
++dbus_sysconfdir = dbus_dep.get_pkgconfig_variable('sysconfdir', define_variable: ['sysconfdir', pk_prefix / pk_sysconfdir])
++dbus_policydir = dbus_sysconfdir / 'dbus-1/system.d'
++dbus_system_bus_services_dir = dbus_dep.get_pkgconfig_variable('system_bus_services_dir', define_variable: ['datadir', pk_prefix / pk_datadir])
++
++# check OS
++host_system = host_machine.system()
++config_h.set('HAVE_' + host_system.to_upper(), true)
++
++# Check whether setnetgrent has a return value
++config_h.set('HAVE_NETGROUP_H', cc.has_header('netgroup.h'))
++
++setnetgrent_return_src = '''
++  #include <stddef.h>
++  #ifdef HAVE_NETGROUP_H
++  #include <netgroup.h>
++  #else
++  #include <netdb.h>
++  #endif
++  int main() {
++      int r = setnetgrent (NULL);
++  };
++'''
++
++config_h.set('HAVE_SETNETGRENT_RETURN', cc.compiles(setnetgrent_return_src, name: 'setnetgrent return support'))
++
++# Select wether to use libsystemd-login, libelogind or ConsoleKit for session tracking
++session_tracking = get_option('session_tracking')
++enable_logind = (session_tracking != 'ConsoleKit')
++if enable_logind
++  if session_tracking == 'libsystemd-login'
++    logind_dep = dependency('libsystemd', required: false)
++    if not logind_dep.found()
++      logind_dep = dependency('libsystemd-login', not_found_message: 'libsystemd support requested but libsystemd or libsystemd-login library not found')
++    endif
++  else
++    logind_dep = dependency('libelogind', not_found_message: 'libelogind support requested but libelogind library not found')
++  endif
++
++  func = 'sd_uid_get_display'
++  config_h.set10('HAVE_' + func.to_upper(), cc.has_function(func, dependencies: logind_dep))
++
++  # systemd unit / service files
++  systemd_systemdsystemunitdir = get_option('systemdsystemunitdir')
++  if systemd_systemdsystemunitdir == ''
++    systemd_dep = dependency('systemd', not_found_message: 'systemd required but not found, please provide a valid systemd user unit dir or disable it')
++    # FIXME: systemd.pc file does not use variables with relative paths, so `define_variable` cannot be used
++    systemd_systemdsystemunitdir = systemd_dep.get_pkgconfig_variable('systemdsystemunitdir')
++  endif
++endif
++config_h.set('HAVE_LIBSYSTEMD', enable_logind)
++
++# User for running polkitd
++polkitd_user = get_option('polkitd_user')
++config_h.set_quoted('POLKITD_USER', polkitd_user)
++
++# Select which authentication framework to use
++auth_deps = []
++
++auth_fw = get_option('authfw')
++enable_pam = (auth_fw == 'pam')
++if enable_pam
++  # Check for PAM
++  pam_dep = cc.find_library('pam')
++  assert(pam_dep.found() and cc.has_function('pam_start', dependencies: pam_dep), 'Could not find pam/pam-devel, please install the needed packages.')
++
++  # how to call pam_strerror
++  pam_strerror_src = '''
++    #include <stdio.h>
++    #include <stdlib.h>
++    #include <security/pam_appl.h>
++    #endif
++    int main() {
++      @0@
++    };
++  '''
++
++  # FIXME: Not necessary anymore?
++  if cc.compiles(pam_strerror_src.format('pam_handle_t *pamh = 0; char *s = pam_strerror(pamh, PAM_SUCCESS);'))
++    # FIXME: unused?
++    config_h.set('PAM_STRERROR_TWO_ARGS', true)
++  else
++    message('how to call pam_strerror: ' + cc.compiles(pam_strerror_src.format('char *s = pam_strerror(PAM_SUCCESS);')).to_string('1', 'unknown'))
++  endif
++
++  pam_prefix = get_option('pam_prefix')
++  if pam_prefix == ''
++    pam_prefix = pk_sysconfdir
++  else
++    message('PAM files will be installed in prefix ' + pam_prefix)
++  endif
++
++  pam_module_dir = get_option('pam_module_dir')
++  if pam_module_dir == ''
++    pam_module_dir = pk_libdir / 'security'
++  endif
++
++  auth_deps += pam_dep
++elif auth_fw == 'shadow'
++  auth_deps += cc.find_library('crypt')
++endif
++config_h.set('POLKIT_AUTHFW_' + auth_fw.to_upper(), true)
++
++# FIXME: sigtimedwait is not used anywhere?
++'''
++if host_system == 'solaris'
++  rt_dep = cc.find_library('rt')
++  cc.has_function('sigtimedwait', dependencies: rt_dep)
++else
++  cc.has_function('sigtimedwait')
++endif
++'''
++
++os_type = get_option('os_type')
++if os_type == ''
++  os_paths = [
++    ['redhat', '/etc/sysconfig/network-scripts'],
++    ['suse', '/etc/SuSE-release'],
++    ['debian', '/etc/debian_version'],
++    ['gentoo', '/etc/gentoo-release'],
++    ['pardus', '/etc/pardus-release'],
++  ]
++
++  foreach os_path: os_paths
++    if run_command('test', '-e', os_path[1]).returncode() == 0
++      os_type = os_path[0]
++      break
++    endif
++  endforeach
++
++  if os_type == ''
++    message('Linux distribution autodetection failed, specify the distribution to target using -Dos_type=')
++  endif
++endif
++
++pam_include = get_option('pam_include')
++if pam_include == ''
++  if ['suse', 'solaris'].contains(os_type)
++    pam_conf = {
++      'PAM_FILE_INCLUDE_AUTH': 'common-auth',
++      'PAM_FILE_INCLUDE_ACCOUNT': 'common-account',
++      'PAM_FILE_INCLUDE_PASSWORD': 'common-password',
++      'PAM_FILE_INCLUDE_SESSION': 'common-session',
++    }
++  elif os_type.contains('bsd')
++    pam_conf = {
++      'PAM_FILE_INCLUDE_AUTH': 'system',
++      'PAM_FILE_INCLUDE_ACCOUNT': 'system',
++      'PAM_FILE_INCLUDE_PASSWORD': 'system',
++      'PAM_FILE_INCLUDE_SESSION': 'system',
++    }
++  #if ['redhat', 'gentoo', 'pardus'].contains(os_type)
++  else
++    pam_conf = {
++      'PAM_FILE_INCLUDE_AUTH': 'system-auth',
++      'PAM_FILE_INCLUDE_ACCOUNT': 'system-auth',
++      'PAM_FILE_INCLUDE_PASSWORD': 'system-auth',
++      'PAM_FILE_INCLUDE_SESSION': 'system-auth',
++    }
++  endif
++else
++  pam_conf = {
++    'PAM_FILE_INCLUDE_AUTH': pam_include,
++    'PAM_FILE_INCLUDE_ACCOUNT': pam_include,
++    'PAM_FILE_INCLUDE_PASSWORD': pam_include,
++    'PAM_FILE_INCLUDE_SESSION': pam_include,
++  }
++endif
++
++enable_introspection = get_option('introspection')
++if enable_introspection
++  dependency('gobject-introspection-1.0', version: '>= 0.6.2')
++endif
++
++content_files = files('COPYING')
++
++subdir('actions')
++subdir('data')
++subdir('src')
++subdir('docs')
++subdir('po')
++
++enable_tests = get_option('tests')
++if enable_tests
++  subdir('test')
++endif
++
++configure_file(
++  output: 'config.h',
++  configuration: config_h,
++)
++
++meson.add_install_script(
++  'meson_post_install.py',
++  get_option('bindir'),
++  pk_pkgdatadir,
++  pk_pkglibdir,
++  pk_pkgsysconfdir,
++  polkitd_user,
++)
++
++output = '\n        ' + meson.project_name() + ' ' + meson.project_version() + '\n'
++output += '        ============\n\n'
++output += '        prefix:                   ' + pk_prefix + '\n'
++output += '        datadir:                  ' + pk_datadir + '\n\n'
++output += '        includedir:               ' + pk_includedir + '\n'
++output += '        libdir:                   ' + pk_libdir + '\n'
++output += '        sysconfdir:               ' + pk_sysconfdir + '\n'
++output += '        source code location:     ' + source_root + '\n'
++output += '        compiler:                 ' + cc.get_id() + '\n'
++output += '        c_flags:                  ' + ' '.join(compiler_c_flags) + '\n\n'
++if enable_man
++  output += '        xsltproc:                 ' + xsltproc.path() + '\n'
++endif
++output += '        introspection:            ' + enable_introspection.to_string() + '\n'
++output += '        Distribution/OS:          ' + os_type + '\n'
++output += '        Authentication framework: ' + auth_fw + '\n'
++output += '        Session tracking:         ' + session_tracking + '\n'
++if enable_logind
++  output += '        systemdsystemunitdir:     ' + systemd_systemdsystemunitdir + '\n'
++endif
++output += '        polkitd user:             ' + polkitd_user + ' \n'
++output += '        Javascript engine:        ' + js_engine + '\n'
++if enable_logind
++endif
++output += '        PAM support:              ' + enable_pam.to_string() + '\n\n'
++if enable_pam
++  output += '        PAM file auth:            ' + pam_conf['PAM_FILE_INCLUDE_AUTH'] + '\n'
++  output += '        PAM file acount:          ' + pam_conf['PAM_FILE_INCLUDE_ACCOUNT'] + '\n'
++  output += '        PAM file password:        ' + pam_conf['PAM_FILE_INCLUDE_PASSWORD'] + '\n'
++  output += '        PAM file session:         ' + pam_conf['PAM_FILE_INCLUDE_SESSION'] + '\n\n'
++endif
++output += '        Building api docs:        ' + enable_gtk_doc.to_string() + '\n'
++output += '        Building man pages:       ' + enable_man.to_string() + '\n'
++output += '        Building examples:        ' + enable_examples.to_string() + '\n'
++output += '        Building tests:           ' + enable_tests.to_string()
++message(output)
+diff --git a/meson_options.txt b/meson_options.txt
+new file mode 100644
+index 0000000..76aa311
+--- /dev/null
++++ b/meson_options.txt
+@@ -0,0 +1,19 @@
++option('session_tracking', type: 'combo', choices: ['libsystemd-login', 'libelogind', 'ConsoleKit'], value: 'ConsoleKit', description: 'session tracking (libsystemd-login/libelogind/ConsoleKit)')
++option('systemdsystemunitdir', type: 'string', value: '', description: 'custom directory for systemd system units')
++
++option('polkitd_user', type: 'string', value: 'polkitd', description: 'User for running polkitd (polkitd)')
++
++option('authfw', type: 'combo', choices: ['pam', 'shadow', 'bsdauth'], value: 'pam', description: 'Authentication framework (pam/shadow)')
++option('os_type', type: 'combo', choices: ['redhat', 'suse', 'gentoo', 'pardus', 'solaris', 'netbsd', ''], value: '', description: 'distribution or OS')
++
++option('pam_include', type: 'string', value: '', description: 'pam file to include')
++option('pam_module_dir', type: 'string', value: '', description: 'directory to install PAM security module')
++option('pam_prefix', type: 'string', value: '', description: 'specify where pam files go')
++
++option('examples', type: 'boolean', value: false, description: 'Build example programs')
++option('tests', type: 'boolean', value: false, description: 'Build tests')
++option('introspection', type: 'boolean', value: true, description: 'Enable introspection for this build')
++
++option('gtk_doc', type: 'boolean', value: false, description: 'use gtk-doc to build documentation')
++option('man', type: 'boolean', value: false, description: 'build manual pages')
++option('js_engine', type: 'combo', choices: ['mozjs', 'duktape'], value: 'duktape', description: 'javascript engine')
+diff --git a/meson_post_install.py b/meson_post_install.py
+new file mode 100644
+index 0000000..784d491
+--- /dev/null
++++ b/meson_post_install.py
+@@ -0,0 +1,37 @@
++#!/usr/bin/env python3
++
++import getpass
++import os
++import subprocess
++import sys
++
++prefix = os.environ['MESON_INSTALL_DESTDIR_PREFIX']
++
++bindir = os.path.join(prefix, sys.argv[1])
++pkgdatadir = os.path.join(prefix, sys.argv[2])
++pkglibdir = os.path.join(prefix, sys.argv[3])
++pkgsysconfdir = os.path.join(prefix, sys.argv[4])
++
++polkitd_user = sys.argv[5]
++
++subprocess.check_call(['chmod', '4755', os.path.join(bindir, 'pkexec')])
++
++dst_dirs = [
++    os.path.join(pkgsysconfdir, 'rules.d'),
++    os.path.join(pkgdatadir, 'rules.d')
++]
++
++for dst in dst_dirs:
++    if not os.path.exists(dst):
++        os.makedirs(dst)
++        subprocess.check_call(['chmod', '700', dst])
++        if getpass.getuser() == "root":
++            subprocess.check_call(['chown', polkitd_user, dst])
++
++# polkit-agent-helper-1 need to be setuid root because it's used to
++# authenticate not only the invoking user, but possibly also root
++# and/or other users.
++dst = os.path.join(pkglibdir, 'polkit-agent-helper-1')
++subprocess.check_call(['chmod', '4755', dst])
++if getpass.getuser() == "root":
++    subprocess.check_call(['chown', 'root', dst])
+diff --git a/po/meson.build b/po/meson.build
+new file mode 100644
+index 0000000..4d9ab58
+--- /dev/null
++++ b/po/meson.build
+@@ -0,0 +1 @@
++i18n.gettext(pk_api_name, preset: 'glib')
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 09fc7b3..b313826 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -5,6 +5,11 @@ if BUILD_EXAMPLES
+ SUBDIRS += examples
+ endif
+ 
++EXTRA_DIST =		\
++	meson.build	\
++	symbol.map	\
++	$(NULL)
++
+ clean-local :
+ 	rm -f *~
+ 
+diff --git a/src/examples/Makefile.am b/src/examples/Makefile.am
+index 9b885f3..3ee373f 100644
+--- a/src/examples/Makefile.am
++++ b/src/examples/Makefile.am
+@@ -59,7 +59,10 @@ dist_polkit_action_DATA = org.freedesktop.policykit.examples.pkexec.policy
+ 
+ DISTCLEANFILES = org.freedesktop.policykit.examples.pkexec.policy
+ 
+-EXTRA_DIST = org.freedesktop.policykit.examples.pkexec.policy.in
++EXTRA_DIST =							\
++	org.freedesktop.policykit.examples.pkexec.policy.in	\
++	meson.build						\
++	$(NULL)
+ 
+ # ----------------------------------------------------------------------------------------------------
+ 
+diff --git a/src/examples/meson.build b/src/examples/meson.build
+new file mode 100644
+index 0000000..5f33afc
+--- /dev/null
++++ b/src/examples/meson.build
+@@ -0,0 +1,27 @@
++policy = 'org.freedesktop.policykit.examples.pkexec.policy'
++
++custom_target(
++  policy,
++  input: policy + '.in',
++  output: '@BASENAME@',
++  command: intltool_xml_cmd,
++  install: true,
++  install_dir: pk_pkgactiondir,
++)
++
++program = 'cancel'
++
++executable(
++  program,
++  program + '.c',
++  include_directories: top_inc,
++  dependencies: libpolkit_gobject_dep,
++)
++
++executable(
++  'pk-example-frobnicate',
++  'frobnicate.c',
++  include_directories: top_inc,
++  dependencies: glib_dep,
++  install: true,
++)
+diff --git a/src/meson.build b/src/meson.build
+new file mode 100644
+index 0000000..4073333
+--- /dev/null
++++ b/src/meson.build
+@@ -0,0 +1,14 @@
++src_inc = include_directories('.')
++
++symbol_map = meson.current_source_dir() / 'symbol.map'
++ldflags = cc.get_supported_link_arguments('-Wl,--version-script,@0@'.format(symbol_map))
++
++subdir('polkit')
++subdir('polkitbackend')
++subdir('polkitagent')
++subdir('programs')
++
++enable_examples = get_option('examples')
++if enable_examples
++  subdir('examples')
++endif
+diff --git a/src/polkit/Makefile.am b/src/polkit/Makefile.am
+index ca36355..2fb5616 100644
+--- a/src/polkit/Makefile.am
++++ b/src/polkit/Makefile.am
+@@ -129,7 +129,12 @@ include $(INTROSPECTION_MAKEFILE)
+ 
+ endif # HAVE_INTROSPECTION
+ 
+-EXTRA_DIST = polkitenumtypes.h.template polkitenumtypes.c.template
++EXTRA_DIST =				\
++	polkitenumtypes.h.template	\
++	polkitenumtypes.c.template	\
++	meson.build			\
++	$(NULL)
++
+ CLEANFILES = $(gir_DATA) $(typelibs_DATA)
+ 
+ dist-hook :
+diff --git a/src/polkit/meson.build b/src/polkit/meson.build
+new file mode 100644
+index 0000000..63dc1e8
+--- /dev/null
++++ b/src/polkit/meson.build
+@@ -0,0 +1,135 @@
++name = '@0@-gobject-@1@'.format(meson.project_name(), pk_api_version)
++
++enum_headers = files(
++  'polkitauthorityfeatures.h',
++  'polkitcheckauthorizationflags.h',
++  'polkiterror.h',
++  'polkitimplicitauthorization.h',
++)
++
++headers = enum_headers + files(
++  'polkitactiondescription.h',
++  'polkitauthority.h',
++  'polkitauthorizationresult.h',
++  'polkitdetails.h',
++  'polkit.h',
++  'polkitidentity.h',
++  'polkitpermission.h',
++  'polkitsubject.h',
++  'polkitsystembusname.h',
++  'polkittemporaryauthorization.h',
++  'polkitunixgroup.h',
++  'polkitunixnetgroup.h',
++  'polkitunixprocess.h',
++  'polkitunixsession.h',
++  'polkitunixuser.h',
++)
++
++private_headers = files(
++  'polkitprivate.h',
++  'polkittypes.h',
++)
++
++install_headers(
++  headers + private_headers,
++  install_dir: pk_pkgincludedir / 'polkit',
++)
++
++common_deps = [
++  gio_dep,
++  glib_dep,
++]
++
++enum_sources = gnome.mkenums_simple(
++  'polkitenumtypes',
++  sources: enum_headers,
++  install_header: true,
++  install_dir: pk_pkgincludedir / 'polkit',
++)
++
++sources = enum_sources + files(
++  'polkitactiondescription.c',
++  'polkitauthority.c',
++  'polkitauthorityfeatures.c',
++  'polkitauthorizationresult.c',
++  'polkitcheckauthorizationflags.c',
++  'polkitdetails.c',
++  'polkiterror.c',
++  'polkitidentity.c',
++  'polkitimplicitauthorization.c',
++  'polkitpermission.c',
++  'polkitsubject.c',
++  'polkitsystembusname.c',
++  'polkittemporaryauthorization.c',
++  'polkitunixgroup.c',
++  'polkitunixnetgroup.c',
++  'polkitunixprocess.c',
++  'polkitunixuser.c',
++)
++
++incs = [
++  top_inc,
++  src_inc,
++]
++
++deps = common_deps
++
++c_flags = '-D_POLKIT_COMPILATION'
++
++if enable_logind
++  sources += 'polkitunixsession-systemd.c'
++
++  deps += logind_dep
++else
++  sources += 'polkitunixsession.c'
++endif
++
++libpolkit_gobject = shared_library(
++  name,
++  sources: sources,
++  version: libversion,
++  include_directories: incs,
++  dependencies: deps,
++  c_args: c_flags,
++  link_args: ldflags,
++  link_depends: symbol_map,
++  install: true,
++)
++
++libpolkit_gobject_dep = declare_dependency(
++  sources: enum_sources[1],
++  include_directories: src_inc,
++  dependencies: common_deps,
++  link_with: libpolkit_gobject,
++)
++
++pkg.generate(
++  libraries: libpolkit_gobject,
++  version: pk_version,
++  name: name,
++  description: 'PolicyKit Authorization API',
++  filebase: name,
++  subdirs: pk_api_name,
++  requires: common_deps,
++  variables: [
++    'exec_prefix=${prefix}',
++    'datadir=' + ('${prefix}' / pk_datadir),
++    'policydir=' + ('${datadir}' / pk_actiondir),
++    'actiondir=' + ('${datadir}' / pk_actiondir),
++    'pkcheck_supports_uid=true',
++  ],
++)
++
++if enable_introspection
++  libpolkit_gobject_gir = gnome.generate_gir(
++    libpolkit_gobject,
++    sources: sources + headers,
++    extra_args: c_flags,
++    nsversion: pk_gir_version,
++    namespace: pk_gir_ns,
++    export_packages: name,
++    includes: 'Gio-2.0',
++    header: 'polkit/polkit.h',
++    install: true,
++  )
++endif
+diff --git a/src/polkitagent/Makefile.am b/src/polkitagent/Makefile.am
+index 49720db..c98f29d 100644
+--- a/src/polkitagent/Makefile.am
++++ b/src/polkitagent/Makefile.am
+@@ -150,7 +150,13 @@ install-data-hook:
+ 	-chown root $(DESTDIR)$(libprivdir)/polkit-agent-helper-1
+ 	-chmod 4755 $(DESTDIR)$(libprivdir)/polkit-agent-helper-1
+ 
+-EXTRA_DIST = polkitagentmarshal.list polkitagentenumtypes.h.template polkitagentenumtypes.c.template
++EXTRA_DIST =				\
++	polkitagentmarshal.list		\
++	polkitagentenumtypes.h.template	\
++	polkitagentenumtypes.c.template	\
++	meson.build			\
++	$(NULL)
++
+ CLEANFILES = $(gir_DATA) $(typelibs_DATA)
+ 
+ dist-hook :
+diff --git a/src/polkitagent/meson.build b/src/polkitagent/meson.build
+new file mode 100644
+index 0000000..84aa260
+--- /dev/null
++++ b/src/polkitagent/meson.build
+@@ -0,0 +1,119 @@
++name = '@0@-agent-@1@'.format(meson.project_name(), pk_api_version)
++
++enum_headers = files('polkitagentlistener.h')
++
++headers = enum_headers + files(
++  'polkitagent.h',
++  'polkitagentsession.h',
++  'polkitagenttextlistener.h',
++  'polkitagenttypes.h',
++)
++
++install_headers(
++  headers,
++  install_dir: pk_pkgincludedir / 'polkitagent',
++)
++
++enum_sources = gnome.mkenums_simple(
++  'polkitagentenumtypes',
++  sources: enum_headers,
++  install_header: true,
++  install_dir: pk_pkgincludedir / 'polkitagent',
++)
++
++marshal = 'polkitagentmarshal'
++
++marshal_sources = gnome.genmarshal(
++  marshal,
++  sources: marshal + '.list',
++  prefix: '_polkit_agent_marshal',
++)
++
++sources = enum_sources + marshal_sources + files(
++  'polkitagentlistener.c',
++  'polkitagentsession.c',
++  'polkitagenttextlistener.c',
++)
++
++deps = [
++  expat_dep,
++  gio_unix_dep,
++  libpolkit_gobject_dep,
++]
++
++c_flags = [
++  '-D_POLKIT_COMPILATION',
++  '-D_POLKIT_AGENT_COMPILATION',
++  '-DPACKAGE_PREFIX="@0@"'.format(pk_prefix),
++]
++
++libpolkit_agent = shared_library(
++  name,
++  sources: sources,
++  version: libversion,
++  include_directories: top_inc,
++  dependencies: deps,
++  c_args: c_flags,
++  link_args: ldflags,
++  link_depends: symbol_map,
++  install: true,
++)
++
++libpolkit_agent_dep = declare_dependency(
++  sources: enum_sources[1],
++  include_directories: '.',
++  dependencies: libpolkit_gobject_dep,
++  link_with: libpolkit_agent,
++)
++
++pkg.generate(
++  libraries: libpolkit_agent,
++  version: pk_version,
++  name: name,
++  description: 'PolicyKit Authentication Agent API',
++  filebase: name,
++  subdirs: pk_api_name,
++  requires: 'polkit-gobject-1',
++  variables: 'exec_prefix=${prefix}',
++)
++
++if enable_introspection
++  incs = [
++    'Gio-2.0',
++    libpolkit_gobject_gir[0],
++  ]
++
++  c_flags = [
++    '-D_POLKIT_AGENT_COMPILATION',
++    '-D_POLKIT_COMPILATION',
++  ]
++
++  gnome.generate_gir(
++    libpolkit_agent,
++    sources: sources + headers,
++    includes: incs,
++    extra_args: c_flags,
++    nsversion: pk_gir_version,
++    namespace: 'PolkitAgent',
++    export_packages: name,
++    header: 'polkitagent/polkitagent.h',
++    install: true,
++  )
++endif
++
++sources = files(
++  'polkitagenthelperprivate.c',
++  'polkitagenthelper-@0@.c'.format(auth_fw),
++)
++
++deps = auth_deps + [libpolkit_gobject_dep]
++
++executable(
++  '@0@-agent-helper-@1@'.format(meson.project_name(), pk_api_version),
++  sources,
++  include_directories: top_inc,
++  dependencies: deps,
++  c_args: '-D_POLKIT_COMPILATION',
++  install: true,
++  install_dir: pk_pkglibdir,
++)
+diff --git a/src/polkitagent/polkitagenttextlistener.c b/src/polkitagent/polkitagenttextlistener.c
+index d864dfb..0ba0352 100644
+--- a/src/polkitagent/polkitagenttextlistener.c
++++ b/src/polkitagent/polkitagenttextlistener.c
+@@ -62,6 +62,17 @@ struct _PolkitAgentTextListener
+   GCancellable *cancellable;
+ 
+   FILE *tty;
++
++  gboolean use_color;
++  gboolean use_alternate_buffer;
++  guint delay;
++};
++
++enum {
++  PROP_ZERO,
++  PROP_USE_COLOR,
++  PROP_USE_ALTERNATE_BUFFER,
++  PROP_DELAY
+ };
+ 
+ typedef struct
+@@ -92,6 +103,9 @@ G_DEFINE_TYPE_WITH_CODE (PolkitAgentTextListener, polkit_agent_text_listener, PO
+ static void
+ polkit_agent_text_listener_init (PolkitAgentTextListener *listener)
+ {
++  listener->use_color = TRUE;
++  listener->use_alternate_buffer = FALSE;
++  listener->delay = 1;
+ }
+ 
+ static void
+@@ -109,6 +123,56 @@ polkit_agent_text_listener_finalize (GObject *object)
+     G_OBJECT_CLASS (polkit_agent_text_listener_parent_class)->finalize (object);
+ }
+ 
++static void
++polkit_agent_text_listener_set_property (GObject      *object,
++                                         guint         prop_id,
++                                         const GValue *value,
++                                         GParamSpec   *pspec)
++{
++  PolkitAgentTextListener *listener = POLKIT_AGENT_TEXT_LISTENER (object);
++
++  switch (prop_id)
++    {
++    case PROP_USE_COLOR:
++      listener->use_color = g_value_get_boolean (value);
++      break;
++    case PROP_USE_ALTERNATE_BUFFER:
++      listener->use_alternate_buffer = g_value_get_boolean (value);
++      break;
++    case PROP_DELAY:
++      listener->delay = g_value_get_uint (value);
++      break;
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++      break;
++    }
++}
++
++static void
++polkit_agent_text_listener_get_property (GObject    *object,
++                                         guint       prop_id,
++                                         GValue     *value,
++                                         GParamSpec *pspec)
++{
++  PolkitAgentTextListener *listener = POLKIT_AGENT_TEXT_LISTENER (object);
++
++  switch (prop_id)
++    {
++    case PROP_USE_COLOR:
++      g_value_set_boolean (value, listener->use_color);
++      break;
++    case PROP_USE_ALTERNATE_BUFFER:
++      g_value_set_boolean (value, listener->use_alternate_buffer);
++      break;
++    case PROP_DELAY:
++      g_value_set_uint (value, listener->delay);
++      break;
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++      break;
++    }
++}
++
+ static void
+ polkit_agent_text_listener_class_init (PolkitAgentTextListenerClass *klass)
+ {
+@@ -117,10 +181,30 @@ polkit_agent_text_listener_class_init (PolkitAgentTextListenerClass *klass)
+ 
+   gobject_class = G_OBJECT_CLASS (klass);
+   gobject_class->finalize = polkit_agent_text_listener_finalize;
++  gobject_class->get_property = polkit_agent_text_listener_get_property;
++  gobject_class->set_property = polkit_agent_text_listener_set_property;
+ 
+   listener_class = POLKIT_AGENT_LISTENER_CLASS (klass);
+   listener_class->initiate_authentication        = polkit_agent_text_listener_initiate_authentication;
+   listener_class->initiate_authentication_finish = polkit_agent_text_listener_initiate_authentication_finish;
++
++  g_object_class_install_property (gobject_class,
++                                   PROP_USE_COLOR,
++                                   g_param_spec_boolean ("use-color", "", "",
++                                                         TRUE,
++                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
++
++  g_object_class_install_property (gobject_class,
++                                   PROP_USE_ALTERNATE_BUFFER,
++                                   g_param_spec_boolean ("use-alternate-buffer", "", "",
++                                                         FALSE,
++                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
++
++  g_object_class_install_property (gobject_class,
++                                   PROP_DELAY,
++                                   g_param_spec_uint ("delay", "", "",
++                                                      0, G_MAXUINT, 1,
++                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+ }
+ 
+ /**
+@@ -204,12 +288,19 @@ on_completed (PolkitAgentSession *session,
+ {
+   PolkitAgentTextListener *listener = POLKIT_AGENT_TEXT_LISTENER (user_data);
+ 
+-  fprintf (listener->tty, "\x1B[1;31m");
++  if (listener->use_color)
++    fprintf (listener->tty, "\x1B[1;31m");
+   if (gained_authorization)
+     fprintf (listener->tty, "==== AUTHENTICATION COMPLETE ====\n");
+   else
+     fprintf (listener->tty, "==== AUTHENTICATION FAILED ====\n");
+-  fprintf (listener->tty, "\x1B[0m");
++  if (listener->use_color)
++    fprintf (listener->tty, "\x1B[0m");
++  if (listener->use_alternate_buffer)
++    {
++      sleep (listener->delay);
++      fprintf (listener->tty, "\x1B[?1049l");
++    }
+   fflush (listener->tty);
+ 
+   g_simple_async_result_complete_in_idle (listener->simple);
+@@ -471,11 +562,15 @@ polkit_agent_text_listener_initiate_authentication (PolkitAgentListener  *_liste
+ 
+   g_assert (g_list_length (identities) >= 1);
+ 
+-  fprintf (listener->tty, "\x1B[1;31m");
++  if (listener->use_alternate_buffer)
++    fprintf (listener->tty, "\x1B[?1049h");
++  if (listener->use_color)
++    fprintf (listener->tty, "\x1B[1;31m");
+   fprintf (listener->tty,
+            "==== AUTHENTICATING FOR %s ====\n",
+            action_id);
+-  fprintf (listener->tty, "\x1B[0m");
++  if (listener->use_color)
++    fprintf (listener->tty, "\x1B[0m");
+   fprintf (listener->tty,
+            "%s\n",
+            message);
+@@ -486,9 +581,11 @@ polkit_agent_text_listener_initiate_authentication (PolkitAgentListener  *_liste
+       identity = choose_identity (listener, identities);
+       if (identity == NULL)
+         {
+-          fprintf (listener->tty, "\x1B[1;31m");
++          if (listener->use_color)
++            fprintf (listener->tty, "\x1B[1;31m");
+           fprintf (listener->tty, "==== AUTHENTICATION CANCELED ====\n");
+-          fprintf (listener->tty, "\x1B[0m");
++          if (listener->use_color)
++            fprintf (listener->tty, "\x1B[0m");
+           fflush (listener->tty);
+           g_simple_async_result_set_error (simple,
+                                            POLKIT_ERROR,
 diff --git a/src/polkitbackend/Makefile.am b/src/polkitbackend/Makefile.am
-index e48b739cc0a4e7606be0271ba4b4e3bd33b08545..9572b067effdf6f0dcd1c6b17b2e8c59c1ed6238 100644
+index e48b739..abcbc6f 100644
 --- a/src/polkitbackend/Makefile.am
 +++ b/src/polkitbackend/Makefile.am
 @@ -33,7 +33,7 @@ libpolkit_backend_1_la_SOURCES =                                   			\
@@ -87,12 +1367,104 @@ index e48b739cc0a4e7606be0271ba4b4e3bd33b08545..9572b067effdf6f0dcd1c6b17b2e8c59
  rulesdir = $(sysconfdir)/polkit-1/rules.d
  rules_DATA = 50-default.rules
  
+@@ -99,6 +107,7 @@ CLEANFILES = $(BUILT_SOURCES)
+ EXTRA_DIST =								\
+ 	init.js								\
+ 	toarray.pl							\
++	meson.build							\
+ 	$(rules_DATA)							\
+ 	$(NULL)
+ 
+diff --git a/src/polkitbackend/meson.build b/src/polkitbackend/meson.build
+new file mode 100644
+index 0000000..d7d3b02
+--- /dev/null
++++ b/src/polkitbackend/meson.build
+@@ -0,0 +1,78 @@
++name = '@0@-backend-@1@'.format(meson.project_name(), pk_api_version)
++
++sources = files(
++  'polkitbackendactionlookup.c',
++  'polkitbackendactionpool.c',
++  'polkitbackendauthority.c',
++  'polkitbackendinteractiveauthority.c',
++)
++
++output = 'initjs.h'
++
++sources += custom_target(
++  output,
++  input: 'init.js',
++  output: output,
++  capture: true,
++  command: [find_program('perl'), meson.current_source_dir() / 'toarray.pl', '@INPUT@', 'init_js'],
++)
++
++deps = [
++  expat_dep,
++  libpolkit_gobject_dep,
++  js_dep,
++]
++
++c_flags = [
++  '-D_POLKIT_COMPILATION',
++  '-D_POLKIT_BACKEND_COMPILATION',
++  '-DPACKAGE_DATA_DIR="@0@"'.format(pk_prefix / pk_datadir),
++  '-DPACKAGE_SYSCONF_DIR="@0@"'.format(pk_prefix / pk_sysconfdir),
++]
++
++if js_engine == 'duktape'
++  sources += files('polkitbackendduktapeauthority.c')
++  deps += libm_dep
++elif js_engine == 'mozjs'
++  sources += files('polkitbackendjsauthority.cpp')
++endif
++
++if enable_logind
++  sources += files('polkitbackendsessionmonitor-systemd.c')
++
++  deps += logind_dep
++else
++  sources += files('polkitbackendsessionmonitor.c')
++endif
++
++libpolkit_backend = static_library(
++  name,
++  sources: sources,
++  include_directories: top_inc,
++  dependencies: deps,
++  c_args: c_flags,
++  cpp_args: c_flags,
++)
++
++install_data(
++  '50-default.rules',
++  install_dir: pk_pkgsysconfdir / 'rules.d',
++)
++
++program = 'polkitd'
++
++c_flags = [
++  '-DG_LOG_DOMAIN="@0@-@1@"'.format(program, pk_api_version),
++  '-DPOLKIT_BACKEND_I_KNOW_API_IS_SUBJECT_TO_CHANGE',
++]
++
++executable(
++  program,
++  program + '.c',
++  include_directories: top_inc,
++  dependencies: libpolkit_gobject_dep,
++  c_args: c_flags,
++  link_with: libpolkit_backend,
++  install: true,
++  install_dir: pk_pkglibdir,
++)
 diff --git a/src/polkitbackend/polkitbackendduktapeauthority.c b/src/polkitbackend/polkitbackendduktapeauthority.c
 new file mode 100644
-index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a848479c047
+index 0000000..4b4f8fd
 --- /dev/null
 +++ b/src/polkitbackend/polkitbackendduktapeauthority.c
-@@ -0,0 +1,1402 @@
+@@ -0,0 +1,1428 @@
 +/*
 + * Copyright (C) 2008-2012 Red Hat, Inc.
 + * Copyright (C) 2015 Tangent Space <jstpierre@mecheye.net>
@@ -121,7 +1493,11 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +#include <errno.h>
 +#include <pwd.h>
 +#include <grp.h>
++#ifdef HAVE_NETGROUP_H
++#include <netgroup.h>
++#else
 +#include <netdb.h>
++#endif
 +#include <string.h>
 +#include <glib/gstdio.h>
 +#include <locale.h>
@@ -160,7 +1536,6 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  duk_context *cx;
 +};
 +
-+#define WATCHDOG_TIMEOUT (15 * G_TIME_SPAN_SECOND)
 +
 +static void utils_spawn (const gchar *const  *argv,
 +                         guint                timeout_seconds,
@@ -215,6 +1590,18 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +/* ---------------------------------------------------------------------------------------------------- */
 +
 +/* ---------------------------------------------------------------------------------------------------- */
++
++static duk_ret_t js_polkit_log (duk_context *cx);
++static duk_ret_t js_polkit_spawn (duk_context *cx);
++static duk_ret_t js_polkit_user_is_in_netgroup (duk_context *cx);
++
++static const duk_function_list_entry js_polkit_functions[] =
++{
++  { "log", js_polkit_log, 1 },
++  { "spawn", js_polkit_spawn, 1 },
++  { "_userIsInNetGroup", js_polkit_user_is_in_netgroup, 2 },
++  { NULL, NULL, 0 },
++};
 +
 +static void
 +polkit_backend_js_authority_init (PolkitBackendJsAuthority *authority)
@@ -298,18 +1685,22 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +
 +  for (l = files; l != NULL; l = l->next)
 +    {
-+      const gchar *filename = l->data;
-+
++      const gchar *filename = (gchar *)l->data;
 +#if (DUK_VERSION >= 20000)
-+      gchar *contents;
-+      gsize length;
-+      GError *error = NULL;
-+      if (!g_file_get_contents (filename, &contents, &length, &error)){
-+        g_warning("Error when file contents of %s: %s\n", filename, error->message);
-+        g_error_free (error);
-+        continue;
-+      }
-+      if (duk_peval_lstring_noresult(cx, contents,length) != 0)
++      GFile *file = g_file_new_for_path (filename);
++      char *contents;
++      gsize len;
++      if (!g_file_load_contents (file, NULL, &contents, &len, NULL, NULL))
++        {
++          polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
++                                        "Error compiling script %s",
++                                        filename);
++          g_object_unref (file);
++          continue;
++        }
++
++      g_object_unref (file);
++      if (duk_peval_lstring_noresult(cx, contents,len) != 0)
 +#else
 +      if (duk_peval_file_noresult (cx, filename) != 0)
 +#endif
@@ -340,7 +1731,11 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  duk_context *cx = authority->priv->cx;
 +
 +  duk_set_top (cx, 0);
-+  duk_get_global_string (cx, "polkit");
++  if (!duk_get_global_string (cx, "polkit")) {
++      polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
++                                    "Error deleting old rules, not loading new ones");
++      return;
++  }
 +  duk_push_string (cx, "_deleteRules");
 +
 +  duk_call_prop (cx, 0, 0);
@@ -429,18 +1824,6 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  g_ptr_array_add (p, NULL);
 +  authority->priv->dir_monitors = (GFileMonitor**) g_ptr_array_free (p, FALSE);
 +}
-+
-+static duk_ret_t js_polkit_log (duk_context *cx);
-+static duk_ret_t js_polkit_spawn (duk_context *cx);
-+static duk_ret_t js_polkit_user_is_in_netgroup (duk_context *cx);
-+
-+static const duk_function_list_entry js_polkit_functions[] =
-+{
-+  { "log", js_polkit_log, 1 },
-+  { "spawn", js_polkit_spawn, 1 },
-+  { "_userIsInNetGroup", js_polkit_user_is_in_netgroup, 2 },
-+  { NULL, NULL, 0 },
-+};
 +
 +static void
 +polkit_backend_js_authority_constructed (GObject *object)
@@ -637,7 +2020,10 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  char *seat_str = NULL;
 +  char *session_str = NULL;
 +
-+  duk_get_global_string (cx, "Subject");
++  if (!duk_get_global_string (cx, "Subject")) {
++    return FALSE;
++  }
++
 +  duk_new (cx, 0);
 +
 +  if (POLKIT_IS_UNIX_PROCESS (subject))
@@ -743,7 +2129,10 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  gchar **keys;
 +  guint n;
 +
-+  duk_get_global_string (cx, "Action");
++  if (!duk_get_global_string (cx, "Action")) {
++    return FALSE;
++  }
++
 +  duk_new (cx, 0);
 +
 +  set_property_str (cx, "id", action_id);
@@ -786,7 +2175,12 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  duk_context *cx = authority->priv->cx;
 +
 +  duk_set_top (cx, 0);
-+  duk_get_global_string (cx, "polkit");
++  if (!duk_get_global_string (cx, "polkit")) {
++      polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
++                                    "Error deleting old rules, not loading new ones");
++      goto out;
++  }
++
 +  duk_push_string (cx, "_runAdminRules");
 +
 +  if (!push_action_and_details (cx, action_id, details, &error))
@@ -869,7 +2263,10 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  duk_context *cx = authority->priv->cx;
 +
 +  duk_set_top (cx, 0);
-+  duk_get_global_string (cx, "polkit");
++  if (!duk_get_global_string (cx, "polkit")) {
++      goto out;
++  }
++
 +  duk_push_string (cx, "_runRules");
 +
 +  if (!push_action_and_details (cx, action_id, details, &error))
@@ -916,7 +2313,8 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 + out:
 +  if (!good)
 +    ret = POLKIT_IMPLICIT_AUTHORIZATION_NOT_AUTHORIZED;
-+  g_free (ret_str);
++  if (ret_str != NULL)
++      g_free (ret_str);
 +
 +  return ret;
 +}
@@ -987,8 +2385,8 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +          GAsyncResult  *res,
 +          gpointer       user_data)
 +{
-+  SpawnData *data = user_data;
-+  data->res = g_object_ref (res);
++  SpawnData *data = (SpawnData *)user_data;
++  data->res = (GAsyncResult*)g_object_ref (res);
 +  g_main_loop_quit (data->loop);
 +}
 +
@@ -1263,7 +2661,7 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +utils_on_cancelled (GCancellable *cancellable,
 +                    gpointer      user_data)
 +{
-+  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
 +  GError *error;
 +
 +  error = NULL;
@@ -1278,7 +2676,7 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +                         GIOCondition condition,
 +                         gpointer user_data)
 +{
-+  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
 +  gchar buf[1024];
 +  gsize bytes_read;
 +
@@ -1292,7 +2690,7 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +                         GIOCondition condition,
 +                         gpointer user_data)
 +{
-+  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
 +  gchar buf[1024];
 +  gsize bytes_read;
 +
@@ -1306,7 +2704,7 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +                      gint     status,
 +                      gpointer user_data)
 +{
-+  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
 +  gchar *buf;
 +  gsize buf_size;
 +
@@ -1335,7 +2733,7 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +static gboolean
 +utils_timeout_cb (gpointer user_data)
 +{
-+  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
 +
 +  data->timed_out = TRUE;
 +
@@ -1364,12 +2762,12 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  data->simple = g_simple_async_result_new (NULL,
 +                                            callback,
 +                                            user_data,
-+                                            utils_spawn);
++                                            (gpointer*)utils_spawn);
 +  data->main_context = g_main_context_get_thread_default ();
 +  if (data->main_context != NULL)
 +    g_main_context_ref (data->main_context);
 +
-+  data->cancellable = cancellable != NULL ? g_object_ref (cancellable) : NULL;
++  data->cancellable = cancellable != NULL ? (GCancellable*)g_object_ref (cancellable) : NULL;
 +
 +  data->child_stdout = g_string_new (NULL);
 +  data->child_stderr = g_string_new (NULL);
@@ -1469,7 +2867,7 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 +  if (g_simple_async_result_propagate_error (simple, error))
 +    goto out;
 +
-+  data = g_simple_async_result_get_op_res_gpointer (simple);
++  data = (UtilsSpawnData*)g_simple_async_result_get_op_res_gpointer (simple);
 +
 +  if (data->timed_out)
 +    {
@@ -1495,3 +2893,264 @@ index 0000000000000000000000000000000000000000..ae984535ed88003ab1b0965e3e109a84
 + out:
 +  return ret;
 +}
+diff --git a/src/programs/Makefile.am b/src/programs/Makefile.am
+index d69853c..f19a7c8 100644
+--- a/src/programs/Makefile.am
++++ b/src/programs/Makefile.am
+@@ -84,6 +84,8 @@ pkaction_LDADD =  	                      				\
+ 
+ # ----------------------------------------------------------------------------------------------------
+ 
++EXTRA_DIST = meson.build
++
+ clean-local :
+ 	rm -f *~
+ 
+diff --git a/src/programs/meson.build b/src/programs/meson.build
+new file mode 100644
+index 0000000..03794be
+--- /dev/null
++++ b/src/programs/meson.build
+@@ -0,0 +1,16 @@
++programs = [
++  ['pkexec', auth_deps + [libpolkit_agent_dep]],
++  ['pkcheck', [libpolkit_agent_dep]],
++  ['pkaction', [libpolkit_gobject_dep]],
++  ['pkttyagent', [libpolkit_agent_dep]],
++]
++
++foreach program: programs
++  executable(
++    program[0],
++    program[0] + '.c',
++    include_directories: top_inc,
++    dependencies: program[1],
++    install: true,
++  )
++endforeach
+diff --git a/src/symbol.map b/src/symbol.map
+new file mode 100644
+index 0000000..2d38225
+--- /dev/null
++++ b/src/symbol.map
+@@ -0,0 +1,6 @@
++{
++global:
++  polkit_*;
++local:
++  *;
++};
+diff --git a/subprojects/mocklibc.wrap b/subprojects/mocklibc.wrap
+new file mode 100644
+index 0000000..af82298
+--- /dev/null
++++ b/subprojects/mocklibc.wrap
+@@ -0,0 +1,10 @@
++[wrap-file]
++directory = mocklibc-1.0
++
++source_url = https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/mocklibc/mocklibc-1.0.tar.gz
++source_filename = mocklibc-1.0.tar.gz
++source_hash = b2236a6af1028414783e9734a46ea051916ec226479d6a55a3bb823bff68f120
++
++patch_url = https://wrapdb.mesonbuild.com/v1/projects/mocklibc/1.0/2/get_zip
++patch_filename = mocklibc-1.0-2-wrap.zip
++patch_hash = 0280f96a2eeb3c023e5acf4e00cef03d362868218d4a85347ea45137c0ef6c56
+diff --git a/subprojects/packagecache/mocklibc-1.0-2-wrap.zip b/subprojects/packagecache/mocklibc-1.0-2-wrap.zip
+new file mode 100644
+index 0000000..656ebaf
+Binary files /dev/null and b/subprojects/packagecache/mocklibc-1.0-2-wrap.zip differ
+diff --git a/subprojects/packagecache/mocklibc-1.0.tar.gz b/subprojects/packagecache/mocklibc-1.0.tar.gz
+new file mode 100644
+index 0000000..568a053
+Binary files /dev/null and b/subprojects/packagecache/mocklibc-1.0.tar.gz differ
+diff --git a/test/Makefile.am b/test/Makefile.am
+index 59d0680..aacc892 100644
+--- a/test/Makefile.am
++++ b/test/Makefile.am
+@@ -6,7 +6,10 @@ noinst_LTLIBRARIES = libpolkit-test-helper.la
+ libpolkit_test_helper_la_SOURCES = polkittesthelper.c polkittesthelper.h
+ libpolkit_test_helper_la_LIBADD = $(GLIB_LIBS)
+ 
+-EXTRA_DIST = data
++EXTRA_DIST =		\
++	data		\
++	meson.build	\
++	$(NULL)
+ 
+ # Use mocklibc to override NSS services for tests
+ export MOCK_PASSWD   := $(abs_top_srcdir)/test/data/etc/passwd
+diff --git a/test/meson.build b/test/meson.build
+new file mode 100644
+index 0000000..3f02d35
+--- /dev/null
++++ b/test/meson.build
+@@ -0,0 +1,26 @@
++libpolkit_test_helper = static_library(
++  'polkit-test-helper',
++  sources: 'polkittesthelper.c',
++  dependencies: glib_dep,
++)
++
++libpolkit_test_helper_dep = declare_dependency(
++  include_directories: '.',
++  dependencies: glib_dep,
++  link_with: libpolkit_test_helper,
++)
++
++libmocklibc = subproject('mocklibc').get_variable('libmocklibc')
++
++test_data_dir = meson.current_source_dir() / 'data'
++test_etc_dir = test_data_dir / 'etc'
++
++test_env = environment()
++test_env.set('LD_PRELOAD', libmocklibc.full_path())
++test_env.set('MOCK_PASSWD', test_etc_dir / 'passwd')
++test_env.set('MOCK_GROUP', test_etc_dir / 'group')
++test_env.set('MOCK_NETGROUP', test_etc_dir / 'netgroup')
++test_env.set('POLKIT_TEST_DATA', test_data_dir)
++
++subdir('polkit')
++subdir('polkitbackend')
+diff --git a/test/polkit/Makefile.am b/test/polkit/Makefile.am
+index 1e0a23f..261d1d5 100644
+--- a/test/polkit/Makefile.am
++++ b/test/polkit/Makefile.am
+@@ -48,6 +48,8 @@ polkitidentitytest_SOURCES = polkitidentitytest.c
+ check_PROGRAMS = $(TEST_PROGS)
+ TESTS = $(TEST_PROGS)
+ 
++EXTRA_DIST = meson.build
++
+ clean-local :
+ 	rm -f *~
+ 
+diff --git a/test/polkit/meson.build b/test/polkit/meson.build
+new file mode 100644
+index 0000000..9c5254f
+--- /dev/null
++++ b/test/polkit/meson.build
+@@ -0,0 +1,27 @@
++test_units = [
++  'polkitunixusertest',
++  'polkitunixgrouptest',
++  'polkitunixnetgrouptest',
++  'polkitidentitytest',
++]
++
++c_flags = [
++  '-D_POLKIT_COMPILATION',
++  '-D_POLKIT_BACKEND_COMPILATION',
++]
++
++foreach test_unit: test_units
++  exe = executable(
++    test_unit,
++    test_unit + '.c',
++    dependencies: libpolkit_gobject_dep,
++    c_args: c_flags,
++  )
++
++  test(
++    test_unit,
++    exe,
++    env: test_env,
++    is_parallel: false,
++  )
++endforeach
+diff --git a/test/polkitbackend/Makefile.am b/test/polkitbackend/Makefile.am
+index b714c60..267a2d2 100644
+--- a/test/polkitbackend/Makefile.am
++++ b/test/polkitbackend/Makefile.am
+@@ -48,6 +48,8 @@ TEST_PROGS += polkitbackendjsauthoritytest-wrapper.py
+ noinst_PROGRAMS = polkitbackendjsauthoritytest
+ TESTS = $(TEST_PROGS)
+ 
++EXTRA_DIST = meson.build
++
+ clean-local :
+ 	rm -f *~
+ 
+diff --git a/test/polkitbackend/meson.build b/test/polkitbackend/meson.build
+new file mode 100644
+index 0000000..98ba120
+--- /dev/null
++++ b/test/polkitbackend/meson.build
+@@ -0,0 +1,32 @@
++test_unit = 'test-polkitbackendjsauthority'
++
++deps = [
++  libpolkit_gobject_dep,
++  libpolkit_test_helper_dep,
++]
++
++c_flags = [
++  '-D_POLKIT_COMPILATION',
++  '-D_POLKIT_BACKEND_COMPILATION',
++]
++
++test_env.set('TOP_BUILD_DIR', build_root)
++test_env.set('TOP_SRC_DIR', source_root)
++
++exe = executable(
++  test_unit,
++  test_unit + '.c',
++  include_directories: top_inc,
++  dependencies: deps,
++  c_args: c_flags,
++  link_with: libpolkit_backend,
++)
++
++prog = find_program('polkitbackendjsauthoritytest-wrapper.py')
++
++test(
++  test_unit,
++  prog,
++  env: test_env,
++  is_parallel: false,
++)
+diff --git a/test/polkitbackend/polkitbackendjsauthoritytest-wrapper.py b/test/polkitbackend/polkitbackendjsauthoritytest-wrapper.py
+index 2a4e160..8e067eb 100755
+--- a/test/polkitbackend/polkitbackendjsauthoritytest-wrapper.py
++++ b/test/polkitbackend/polkitbackendjsauthoritytest-wrapper.py
+@@ -28,13 +28,22 @@ class TestPolkitBackendJsAuthority(dbusmock.DBusTestCase):
+     @classmethod
+     def setUpClass(klass):
+         klass.start_system_bus()
++        klass.mocklibc_path = None
+ 
+-        klass.top_build_dir = '../../'
+         if 'TOP_BUILD_DIR' in os.environ:
+             klass.top_build_dir = os.environ['TOP_BUILD_DIR']
+-        klass.mocklibc_path = klass.top_build_dir + '/test/mocklibc/bin/mocklibc'
+-        assert(os.path.exists(klass.mocklibc_path))
++            klass.mocklibc_path = klass.top_build_dir  + '/subprojects/mocklibc-1.0/bin/mocklibc'
++
++        # suppose autotools over meson
++        if not os.path.exists(klass.mocklibc_path):
++            klass.top_build_dir = '../../'
++            klass.mocklibc_path = klass.top_build_dir + '/test/mocklibc/bin/mocklibc'
+         print ('Top build dir: %s' % klass.top_build_dir)
++        print ('mocklibc path: %s' % klass.mocklibc_path)
++        assert(os.path.exists(klass.mocklibc_path))
++
++        # WORKAROUND - unzipped mocklibc does not preserve file permissions
++        os.chmod(klass.mocklibc_path, 0o755)
+ 
+         klass.top_src_dir = os.path.dirname(os.path.realpath(__file__)) + '/../../'
+         if 'TOP_SRC_DIR' in os.environ:
+@@ -54,7 +63,13 @@ class TestPolkitBackendJsAuthority(dbusmock.DBusTestCase):
+     def test_polkitbackendjsauthoritytest(self):
+         # Add '; exit 0' at the end of the cmd line if launching fails and you
+         # want to capture the error output
+-        out = subprocess.check_output(self.mocklibc_path + ' ' + self.top_build_dir + '/test/polkitbackend/polkitbackendjsauthoritytest',
++        test_path = self.top_build_dir + '/test/polkitbackend/test-polkitbackendjsauthority'
++
++        if not os.path.exists(test_path):
++            print('\n %s... not found' % test_path)
++            test_path = self.top_build_dir + '/test/polkitbackend/polkitbackendjsauthoritytest'
++
++        out = subprocess.check_output(self.mocklibc_path + ' ' + test_path,
+                                       stderr=subprocess.STDOUT,
+                                       shell=True,
+                                       universal_newlines=True)
