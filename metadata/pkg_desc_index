@@ -6,7 +6,7 @@ gui-apps/slurp 9999: Select a region in a Wayland compositor
 gui-apps/waybar 0.9.4: Highly customizable Wayland bar for Sway and Wlroots based compositors.
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wofi 1.2.3: Launcher/menu program for wlroots based wayland compositors such as sway
-gui-libs/gtk-layer-shell 0.5.1: Library to create desktop components for Wayland using the Layer Shell protocol
+gui-libs/gtk-layer-shell 0.5.2: Library to create desktop components for Wayland using the Layer Shell protocol
 gui-libs/xdg-desktop-portal-wlr 0.1.0: xdg-desktop-portal backend for wlroots
 mail-mta/hydroxide 0.2.16: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/grim 9999: Grab images from a Wayland compositor
