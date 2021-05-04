@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-inherit meson
+inherit meson systemd
 
 DESCRIPTION="A lightweight notification daemon for Wayland. Works on Sway."
 HOMEPAGE="https://github.com/emersion/mako"
@@ -18,7 +18,7 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="+icons"
+IUSE="+icons fish-completion zsh-completion"
 
 DEPEND="
 	dev-libs/wayland
@@ -36,16 +36,25 @@ DEPEND="
 "
 RDEPEND="
 	${DEPEND}
+	dev-libs/wayland-protocols
 "
 BDEPEND="
 	virtual/pkgconfig
-	app-text/scdoc
+	>=app-text/scdoc-1.9.7
 "
 
 src_configure() {
 	local emesonargs=(
 		-Dicons=$(usex icons enabled disabled)
+		$(meson_use fish-completion fish-completions)
+		$(meson_use zsh-completion zsh-completions)
 		"-Dwerror=false"
 	)
 	meson_src_configure
+}
+
+src_install() {
+	default
+	meson_src_install
+	systemd_douserunit  "${S}/contrib/systemd/mako.service"
 }
