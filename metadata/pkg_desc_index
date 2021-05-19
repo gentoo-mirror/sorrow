@@ -1,5 +1,5 @@
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
-gui-apps/gammastep 2.0.2: A screen color temperature adjusting software
+gui-apps/gammastep 2.0.7: A screen color temperature adjusting software
 gui-apps/grim 1.3.2: Grab images from a Wayland compositor.
 gui-apps/mako 1.5: A lightweight notification daemon for Wayland. Works on Sway.
 gui-apps/slurp 1.3.2: Select a region in a Wayland compositor
@@ -10,8 +10,6 @@ gui-libs/gtk-layer-shell 0.6.0: Library to create desktop components for Wayland
 gui-libs/xdg-desktop-portal-wlr 0.3.0: xdg-desktop-portal backend for wlroots
 mail-mta/hydroxide 0.2.18: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
-sys-apps/xdg-desktop-portal 1.8.0: Desktop integration portal
-sys-apps/xdg-desktop-portal-gtk 1.8.0: portal backend implementation that is using GTK+ and various pieces of GNOME
 sys-auth/polkit 0.118-r1: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
