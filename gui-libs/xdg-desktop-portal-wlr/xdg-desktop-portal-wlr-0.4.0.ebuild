@@ -21,7 +21,7 @@ DEPEND="
 	>=dev-libs/wayland-protocols-1.14:=
 	elogind? ( >=sys-auth/elogind-237 )
 	systemd? ( >=sys-apps/systemd-237 )
-	dev-libs/iniparser:4
+	dev-libs/inih
 "
 RDEPEND="
 	${DEPEND}
@@ -33,9 +33,6 @@ BDEPEND="
 	>=dev-util/meson-0.47.0
 	virtual/pkgconfig
 "
-PATCHES=(
-	"${FILESDIR}/iniparser4.patch"
-)
 
 src_configure() {
 	local emesonargs=(
