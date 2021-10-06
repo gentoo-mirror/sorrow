@@ -9,6 +9,6 @@ gui-apps/wofi 1.2.4: Launcher/menu program for wlroots based wayland compositors
 gui-libs/gtk-layer-shell 0.6.0: Library to create desktop components for Wayland using the Layer Shell protocol
 mail-mta/hydroxide 0.2.20: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
-sys-auth/polkit 0.119-r2: Policy framework for controlling privileges for system-wide services
+sys-auth/polkit 0.120-r1: Policy framework for controlling privileges for system-wide services
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
