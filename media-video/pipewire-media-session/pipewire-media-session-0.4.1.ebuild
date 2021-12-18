@@ -7,7 +7,7 @@ inherit meson systemd
 
 MY_PN="media-session"
 
-SRC_URI="https://gitlab.freedesktop.org/pipewire/${MY_PN}/-/archive/${PV}/${MY_PN}-${PV}.tar.gz"
+SRC_URI="https://gitlab.freedesktop.org/pipewire/${MY_PN}/-/archive/${PV}/${MY_PN}-${PV}.tar.gz -> ${P}.tar.gz"
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 
 DESCRIPTION="Example session manager for PipeWire"
