@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
 
@@ -12,15 +12,16 @@ if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 else
 	SRC_URI="https://gitlab.freedesktop.org/${PN}/${PN}/-/archive/${PV}/${P}.tar.gz"
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Multimedia processing graphs"
 HOMEPAGE="https://pipewire.org/"
 
 LICENSE="MIT LGPL-2.1+ GPL-2"
-SLOT="0/0.3"
-IUSE="bluetooth doc echo-cancel extra gstreamer jack-client jack-sdk pipewire-alsa systemd test v4l"
+# ABI was broken in 0.3.42 for https://gitlab.freedesktop.org/pipewire/wireplumber/-/issues/49
+SLOT="0/0.4"
+IUSE="bluetooth doc echo-cancel extra gstreamer jack-client jack-sdk lv2 pipewire-alsa ssl systemd test v4l zeroconf"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
@@ -56,6 +57,7 @@ RDEPEND="
 		media-libs/libfreeaptx
 		media-libs/sbc
 		>=net-wireless/bluez-4.101:=
+		virtual/libusb:1
 	)
 	echo-cancel? ( media-libs/webrtc-audio-processing:0 )
 	extra? (
@@ -71,13 +73,16 @@ RDEPEND="
 		!media-sound/jack-audio-connection-kit
 		!media-sound/jack2
 	)
+	lv2? ( media-libs/lilv )
 	pipewire-alsa? (
 		>=media-libs/alsa-lib-1.1.7[${MULTILIB_USEDEP}]
 		!media-plugins/alsa-plugins[${MULTILIB_USEDEP},pulseaudio]
 	)
 	!pipewire-alsa? ( media-plugins/alsa-plugins[${MULTILIB_USEDEP},pulseaudio] )
+	ssl? ( dev-libs/openssl:= )
 	systemd? ( sys-apps/systemd )
 	v4l? ( media-libs/libv4l )
+	zeroconf? ( net-dns/avahi )
 "
 
 DEPEND="${RDEPEND}"
@@ -100,6 +105,9 @@ DOCS=( {README,INSTALL}.md NEWS )
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.3.25-enable-failed-mlock-warning.patch
+
+	# Upstream patches/backports
+	"${FILESDIR}"/${P}-systemd-user-unit-dir.patch
 )
 
 # limitsdfile related code taken from =sys-auth/realtime-base-0.1
@@ -126,6 +134,7 @@ src_prepare() {
 multilib_src_configure() {
 	local emesonargs=(
 		-Ddocdir="${EPREFIX}"/usr/share/doc/${PF}
+		$(meson_native_use_feature zeroconf avahi)
 		$(meson_native_use_feature doc docs)
 		$(meson_native_enabled man)
 		$(meson_feature test tests)
@@ -133,7 +142,11 @@ multilib_src_configure() {
 		$(meson_native_use_feature gstreamer)
 		$(meson_native_use_feature gstreamer gstreamer-device-provider)
 		$(meson_native_use_feature systemd)
+
 		-Dsystemd-system-service=disabled # Matches upstream
+		-Dsystemd-system-unit-dir="$(systemd_get_systemunitdir)"
+		-Dsystemd-user-unit-dir="$(systemd_get_userunitdir)"
+
 		$(meson_native_use_feature systemd systemd-user-service)
 		$(meson_feature pipewire-alsa) # Allows integrating ALSA apps into PW graph
 		-Dspa-plugins=enabled
@@ -148,6 +161,7 @@ multilib_src_configure() {
 		$(meson_native_use_feature bluetooth bluez5-codec-aac)
 		$(meson_native_use_feature bluetooth bluez5-codec-aptx)
 		$(meson_native_use_feature bluetooth bluez5-codec-ldac)
+		$(meson_native_use_feature bluetooth libusb) # At least for now only used by bluez5 native (quirk detection of adapters)
 		$(meson_native_use_feature echo-cancel echo-cancel-webrtc) #807889
 		-Dcontrol=enabled # Matches upstream
 		-Daudiotestsrc=enabled # Matches upstream
@@ -159,8 +173,10 @@ multilib_src_configure() {
 		-Dsupport=enabled # Miscellaneous/common plugins, such as null sink
 		-Devl=disabled # Matches upstream
 		-Dtest=disabled # fakesink and fakesource plugins
+		$(meson_native_use_feature lv2)
 		$(meson_native_use_feature v4l v4l2)
 		-Dlibcamera=disabled # libcamera is not in Portage tree
+		$(meson_native_use_feature ssl raop)
 		-Dvideoconvert=enabled # Matches upstream
 		-Dvideotestsrc=enabled # Matches upstream
 		-Dvolume=enabled # Matches upstream
