@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -11,7 +11,7 @@ SRC_URI="https://www.freedesktop.org/software/${PN}/releases/${P}.tar.gz"
 
 LICENSE="LGPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc64 ~riscv ~s390 ~x86"
+KEYWORDS="amd64 arm arm64 ~mips ppc64 ~riscv ~s390 x86"
 IUSE="examples gtk +introspection kde pam selinux systemd test"
 #RESTRICT="!test? ( test )"
 # Tests currently don't work with meson. See
@@ -56,15 +56,16 @@ PDEPEND="
 
 DOCS=( docs/TODO HACKING NEWS README )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-0.120-duktape.patch
-)
-
 QA_MULTILIB_PATHS="
 	usr/lib/polkit-1/polkit-agent-helper-1
 	usr/lib/polkit-1/polkitd"
 
 src_prepare() {
+	local PATCHES=(
+		"${FILESDIR}"/${PN}-0.120-duktape.patch
+		"${FILESDIR}/polkit-0.120-meson.patch"
+		"${FILESDIR}/polkit-0.120-CVE-2021-4043.patch"
+	)
 	default
 
 	sed -i -e 's|unix-group:wheel|unix-user:0|' src/polkitbackend/*-default.rules || die #401513
@@ -110,6 +111,7 @@ src_install() {
 	# meson does not install required files with SUID bit. See
 	#  https://bugs.gentoo.org/816393
 	# Remove the following lines once this has been fixed by upstream
+	# (should be fixed in next release: https://gitlab.freedesktop.org/polkit/polkit/-/commit/4ff1abe4a4c1f8c8378b9eaddb0346ac6448abd8)
 	fperms u+s /usr/bin/pkexec
 	fperms u+s /usr/lib/polkit-1/polkit-agent-helper-1
 }
