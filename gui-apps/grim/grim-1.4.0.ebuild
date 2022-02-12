@@ -18,7 +18,7 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="+man jpeg"
+IUSE="+man jpeg fish-completion bash-completion"
 
 DEPEND="
 	>=dev-libs/wayland-protocols-1.14
@@ -38,6 +38,8 @@ src_configure() {
 	local emesonargs=(
 		$(meson_feature jpeg)
 		$(meson_feature man man-pages)
+		$(meson_enable bash-completion bash-completions)
+		$(meson_enable fish-completion fish-completions)
 		"-Dwerror=false"
 	)
 	meson_src_configure
