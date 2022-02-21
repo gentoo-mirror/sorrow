@@ -1,0 +1,14 @@
+BDEPEND=virtual/rust >=virtual/rust-1.53 >=dev-vcs/git-1.8.2.1[curl]
+DEFINED_PHASES=compile configure install test unpack
+DESCRIPTION=deathowl's dummy login manager
+EAPI=8
+HOMEPAGE=https://github.com/deathowl/ddlm
+INHERIT=cargo git-r3
+IUSE=debug
+KEYWORDS=~amd64 ~arm ~arm64 ~x86
+LICENSE=ddlm-EULA
+PROPERTIES=live
+RDEPEND=gui-libs/greetd
+SLOT=0
+_eclasses_=multiprocessing	61c959fc55c15c00bbb1079d6a71370b	toolchain-funcs	badd6e329e1f3e6bee99b35bf8763ce8	multilib	de4beb52bfa93c4c5d96792a6b5e1784	cargo	7ea27a358c2ff39754bf66a96c06f3de	git-r3	cc875b0c1e9b3bdac1af0f82f3ba29da
+_md5_=0cc868418336b769074c64cc0d1a84c6
