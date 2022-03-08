@@ -10,15 +10,15 @@ SRC_URI="https://freedesktop.org/software/pulseaudio/${PN}/${P}.tar.xz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 arm ~arm64 ~hppa ppc ~ppc64 ~riscv ~sparc x86"
-IUSE="nls"
+IUSE="nls libcanberra"
 
 RDEPEND="
 	dev-libs/json-glib
 	>=dev-cpp/gtkmm-3.22:3.0
 	>=dev-libs/libsigc++-2.2:2
-	>=media-libs/libcanberra-0.16[gtk3]
 	>=media-sound/pulseaudio-15.0[glib]
 	virtual/freedesktop-icon-theme
+	libcanberra? ( >=media-libs/libcanberra-0.16[gtk3] )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -29,10 +29,15 @@ BDEPEND="
 	)
 "
 
+PATCHES=(
+	"${FILESDIR}/5.0-optional-libcanberra.patch"
+)
+
 src_configure() {
 	local myeconfargs=(
 		--disable-lynx
 		$(use_enable nls)
+		$(use_with libcanberra)
 	)
 	econf "${myeconfargs[@]}"
 }
