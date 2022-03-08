@@ -14,13 +14,13 @@
  AC_SUBST(PULSE_CFLAGS)
  
 +AC_ARG_WITH(libcanberra, [AS_HELP_STRING([--without-libcanberra], [do not use libcanberra])])
-+if test "$with_zlib" != no
-+then
-+   PKG_CHECK_MODULES(CANBERRA, [ libcanberra-gtk3 >= 0.16 ])
++AS_IF([test "x$with_libcanberra" != "xno"], [
++   PKG_CHECK_MODULES(CANBERRA, [ libcanberra-gtk3 >= 0.16 ], [
++      AC_DEFINE([HAVE_LIBCANBERRA], [1], [have libcanberra library])
++   ])
 +   AC_SUBST(CANBERRA_LIBS)
 +   AC_SUBST(CANBERRA_CFLAGS)
-+   AC_DEFINE(HAVE_LIBCANGERRA [], [have libcanberra library])
-+fi
++])
 +
  AC_CHECK_LIB(pulse, pa_context_send_message_to_object, [HAVE_PULSE_MESSAGING_API=yes], [HAVE_PULSE_MESSAGING_API=no])
  AS_IF([test "x$HAVE_PULSE_MESSAGING_API" = "xyes"], AC_DEFINE([HAVE_PULSE_MESSAGING_API], 1, [Have messaging API.]))
