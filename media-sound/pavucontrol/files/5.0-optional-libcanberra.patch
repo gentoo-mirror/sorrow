@@ -1,0 +1,99 @@
+--- a/configure.ac	2022-03-09 05:15:29.651028407 +1000
++++ b/configure.ac	2022-03-09 05:29:57.958201420 +1000
+@@ -41,7 +41,7 @@
+ AC_HEADER_STDC
+ AX_CXX_COMPILE_STDCXX_11
+ 
+-PKG_CHECK_MODULES(GUILIBS, [ gtkmm-3.0 >= 3.22 sigc++-2.0 libcanberra-gtk3 >= 0.16 json-glib-1.0 ])
++PKG_CHECK_MODULES(GUILIBS, [ gtkmm-3.0 >= 3.22 sigc++-2.0 json-glib-1.0 ])
+ AC_SUBST(GUILIBS_CFLAGS)
+ AC_SUBST(GUILIBS_LIBS)
+ 
+@@ -56,6 +56,15 @@
+ AC_SUBST(PULSE_LIBS)
+ AC_SUBST(PULSE_CFLAGS)
+ 
++AC_ARG_WITH(libcanberra, [AS_HELP_STRING([--without-libcanberra], [do not use libcanberra])])
++if test "$with_zlib" != no
++then
++   PKG_CHECK_MODULES(CANBERRA, [ libcanberra-gtk3 >= 0.16 ])
++   AC_SUBST(CANBERRA_LIBS)
++   AC_SUBST(CANBERRA_CFLAGS)
++   AC_DEFINE(HAVE_LIBCANGERRA [], [have libcanberra library])
++fi
++
+ AC_CHECK_LIB(pulse, pa_context_send_message_to_object, [HAVE_PULSE_MESSAGING_API=yes], [HAVE_PULSE_MESSAGING_API=no])
+ AS_IF([test "x$HAVE_PULSE_MESSAGING_API" = "xyes"], AC_DEFINE([HAVE_PULSE_MESSAGING_API], 1, [Have messaging API.]))
+ 
+--- a/src/pavuapplication.cc	2022-03-09 05:33:24.771679827 +1000
++++ b/src/pavuapplication.cc	2022-03-09 05:33:44.275455045 +1000
+@@ -24,8 +24,6 @@
+ 
+ #include "i18n.h"
+ 
+-#include <canberra-gtk.h>
+-
+ #include "pavuapplication.h"
+ #include "pavucontrol.h"
+ #include "mainwindow.h"
+--- a/src/pavucontrol.cc	2022-03-09 05:35:20.278375012 +1000
++++ b/src/pavucontrol.cc	2022-03-09 05:37:02.989261758 +1000
+@@ -29,7 +29,9 @@
+ #include <json-glib/json-glib.h>
+ #endif
+ 
++#ifdef HAVE_LIBCANBERRA
+ #include <canberra-gtk.h>
++#endif
+ 
+ #include "pavucontrol.h"
+ #include "i18n.h"
+@@ -916,7 +918,9 @@
+     tab_number = _tab_number;
+     retry = _retry;
+ 
++#ifdef HAVE_LIBCANBERRA
+     ca_context_set_driver(ca_gtk_context_get(), "pulse");
++#endif
+ 
+     mainWindow = MainWindow::create(maximize);
+ 
+--- a/src/sinkwidget.cc	2022-03-09 05:38:24.560403542 +1000
++++ b/src/sinkwidget.cc	2022-03-09 05:41:43.146389197 +1000
+@@ -24,7 +24,10 @@
+ 
+ #include "sinkwidget.h"
+ 
++#ifdef HAVE_LIBCANBERRA
+ #include <canberra-gtk.h>
++#endif
++
+ #if HAVE_EXT_DEVICE_RESTORE_API
+ #  include <pulse/format.h>
+ #  include <pulse/ext-device-restore.h>
+@@ -88,7 +91,9 @@
+ 
+ void SinkWidget::executeVolumeUpdate() {
+     pa_operation* o;
++#ifdef HAVE_LIBCANBERRA
+     char dev[64];
++#endif
+     int playing = 0;
+ 
+     if (!(o = pa_context_set_sink_volume_by_index(get_context(), index, &volume, NULL, NULL))) {
+@@ -98,6 +103,7 @@
+ 
+     pa_operation_unref(o);
+ 
++#ifdef HAVE_LIBCANBERRA
+     ca_context_playing(ca_gtk_context_get(), 2, &playing);
+     if (playing)
+         return;
+@@ -114,6 +120,7 @@
+                            NULL);
+ 
+     ca_context_change_device(ca_gtk_context_get(), NULL);
++#endif
+ }
+ 
+ void SinkWidget::onMuteToggleButton() {
