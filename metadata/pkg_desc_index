@@ -12,4 +12,3 @@ media-sound/pavucontrol 5.0-r1: Pulseaudio Volume Control, GTK based mixer for P
 media-video/pipewire 0.3.45_p20220205: Multimedia processing graphs
 media-video/pipewire-media-session 0.4.1: Example session manager for PipeWire
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
-x11-misc/nvidia-xrun 9999: Script to run dedicated X server with discrete nvidia graphics
