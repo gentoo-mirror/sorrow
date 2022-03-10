@@ -12,3 +12,4 @@ media-sound/pavucontrol 5.0-r1: Pulseaudio Volume Control, GTK based mixer for P
 media-video/pipewire 0.3.45_p20220205: Multimedia processing graphs
 media-video/pipewire-media-session 0.4.1: Example session manager for PipeWire
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
+x11-misc/i3status-rust 0.21.7: A feature-rich and resource-friendly replacement for i3status, written in Rust.
