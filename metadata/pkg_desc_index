@@ -11,7 +11,7 @@ gui-apps/wofi 1.2.4: Launcher/menu program for wlroots based wayland compositors
 mail-mta/hydroxide 0.2.21: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
 media-sound/pavucontrol 5.0-r1: Pulseaudio Volume Control, GTK based mixer for Pulseaudio
-media-video/pipewire 0.3.49: Multimedia processing graphs
+media-video/pipewire 0.3.51-r1: Multimedia processing graphs
 media-video/pipewire-media-session 0.4.1: Example session manager for PipeWire
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 x11-misc/i3status-rust 0.21.7: A feature-rich and resource-friendly replacement for i3status, written in Rust.
