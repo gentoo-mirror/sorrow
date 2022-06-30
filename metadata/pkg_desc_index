@@ -1,6 +1,7 @@
 app-i18n/anthywl 9999: japanese input method for wlroots-based compositors
 dev-libs/libscfg 9999: simple configuration format
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
+gnome-base/nautilus 42.2: Default file manager for the GNOME desktop
 gnome-extra/gnome-system-monitor 42.0: The Gnome System Monitor
 gui-apps/ddlm 9999: deathowl's dummy login manager
 gui-apps/grim 1.4.0: Grab images from a Wayland compositor.
@@ -13,6 +14,6 @@ gui-libs/xdg-desktop-portal-wlr 0.6.0: xdg-desktop-portal backend for wlroots
 mail-mta/hydroxide 0.2.23: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
 media-sound/pavucontrol 5.0-r1: Pulseaudio Volume Control, GTK based mixer for Pulseaudio
-media-video/pipewire 0.3.51-r1: Multimedia processing graphs
+media-video/pipewire 0.3.52-r1: Multimedia processing graphs
 media-video/pipewire-media-session 0.4.1: Example session manager for PipeWire
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
