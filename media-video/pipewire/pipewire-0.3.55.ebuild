@@ -138,7 +138,7 @@ src_prepare() {
 
 	einfo "Generating ${limitsdfile}"
 	cat > ${limitsdfile} <<- EOF || die
-		# Start of ${limitsdfile} from ${P}
+		# Start of ${limitsdfile} from ${PN}
 
 		@audio	-	memlock 256
 
@@ -148,7 +148,7 @@ src_prepare() {
 			echo @pipewire - memlock 4194304
 		})
 
-		# End of ${limitsdfile} from ${P}
+		# End of ${limitsdfile} from ${PN}
 	EOF
 }
 
