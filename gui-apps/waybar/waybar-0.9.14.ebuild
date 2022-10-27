@@ -26,6 +26,7 @@ BDEPEND="
 	dev-util/gdbus-codegen
 	virtual/pkgconfig
 "
+#	<dev-libs/libfmt-9.0.0:=
 DEPEND="
 	dev-cpp/cairomm:0
 	dev-cpp/glibmm:2
