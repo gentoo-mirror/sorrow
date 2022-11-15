@@ -14,6 +14,6 @@ gui-libs/xdg-desktop-portal-wlr 0.6.0: xdg-desktop-portal backend for wlroots
 mail-mta/hydroxide 0.2.24: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
 media-sound/pavucontrol 5.0-r1: Pulseaudio Volume Control, GTK based mixer for Pulseaudio
-media-video/pipewire 0.3.59-r2: Multimedia processing graphs
+media-video/pipewire 0.3.60: Multimedia processing graphs
 media-video/pipewire-media-session 0.4.1: Example session manager for PipeWire
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
