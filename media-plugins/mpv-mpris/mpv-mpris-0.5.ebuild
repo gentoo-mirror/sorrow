@@ -21,7 +21,7 @@ LICENSE="MIT"
 IUSE="+autoload"
 
 BDEPEND="virtual/pkgconfig"
-RDEPEND="media-video/mpv:=[cplugins,libmpv]
+RDEPEND="media-video/mpv:=[cplugins(+),libmpv]
 	dev-libs/glib"
 DEPEND="${RDEPEND}"
 
