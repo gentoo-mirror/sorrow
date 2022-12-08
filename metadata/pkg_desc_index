@@ -11,7 +11,6 @@ gui-apps/waybar 0.9.16: Highly customizable Wayland bar for Sway and Wlroots bas
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wlsunset 9999: Day/night gamma adjustments for Wayland
 gui-apps/wofi 1.2.4: Launcher/menu program for wlroots based wayland compositors such as sway
-gui-libs/xdg-desktop-portal-wlr 0.6.0: xdg-desktop-portal backend for wlroots
 mail-mta/hydroxide 0.2.24: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
 media-sound/pavucontrol 5.0-r1: Pulseaudio Volume Control, GTK based mixer for Pulseaudio
