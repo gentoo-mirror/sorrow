@@ -1,15 +1,15 @@
 BDEPEND=virtual/pkgconfig nls? ( dev-util/intltool sys-devel/gettext ) sys-devel/gnuconfig >=app-portage/elt-patches-20170815 || ( >=sys-devel/automake-1.16.5:1.16 ) >=sys-devel/autoconf-2.71-r5 >=sys-devel/libtool-2.4.7
 DEFINED_PHASES=configure
-DEPEND=dev-libs/json-glib >=dev-cpp/gtkmm-3.22:3.0 >=dev-libs/libsigc++-2.2:2 >=media-sound/pulseaudio-15.0[glib] virtual/freedesktop-icon-theme libcanberra? ( >=media-libs/libcanberra-0.16[gtk3] )
+DEPEND=dev-libs/json-glib >=dev-cpp/gtkmm-3.22:3.0 >=dev-libs/libsigc++-2.2:2 >=media-libs/libpulse-15.0[glib] virtual/freedesktop-icon-theme libcanberra? ( >=media-libs/libcanberra-0.16[gtk3] )
 DESCRIPTION=Pulseaudio Volume Control, GTK based mixer for Pulseaudio
 EAPI=7
 HOMEPAGE=https://freedesktop.org/software/pulseaudio/pavucontrol/
 INHERIT=autotools
 IUSE=nls libcanberra
-KEYWORDS=amd64 arm ~arm64 ~hppa ppc ~ppc64 ~riscv ~sparc x86
+KEYWORDS=~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86
 LICENSE=GPL-2
-RDEPEND=dev-libs/json-glib >=dev-cpp/gtkmm-3.22:3.0 >=dev-libs/libsigc++-2.2:2 >=media-sound/pulseaudio-15.0[glib] virtual/freedesktop-icon-theme libcanberra? ( >=media-libs/libcanberra-0.16[gtk3] )
+RDEPEND=dev-libs/json-glib >=dev-cpp/gtkmm-3.22:3.0 >=dev-libs/libsigc++-2.2:2 >=media-libs/libpulse-15.0[glib] virtual/freedesktop-icon-theme libcanberra? ( >=media-libs/libcanberra-0.16[gtk3] )
 SLOT=0
 SRC_URI=https://freedesktop.org/software/pulseaudio/pavucontrol/pavucontrol-5.0.tar.xz
 _eclasses_=gnuconfig	b6b3e92f8b8c996400074b5f61a59256	toolchain-funcs	37a4612ce5522df5a100359a8dbc8491	multilib	5ca4e49abed8e3a2f7b56920eadee157	libtool	241a8f577b9781a42a7421e53448a44e	autotools	6dcd6b6a486e79928e1243ff9ba41fcc
-_md5_=e9c763c34a629854361495d2a353fb87
+_md5_=4f08b69d2590172a652669f88b1daef2
