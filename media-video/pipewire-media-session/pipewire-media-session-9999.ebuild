@@ -3,11 +3,9 @@
 
 EAPI=7
 
-inherit meson systemd
+inherit meson systemd git-r3
 
-MY_PN="media-session"
-
-SRC_URI="https://gitlab.freedesktop.org/pipewire/${MY_PN}/-/archive/${PV}/${MY_PN}-${PV}.tar.gz -> ${P}.tar.gz"
+EGIT_REPO_URI="https://gitlab.freedesktop.org/pipewire/media-session.git"
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 
 DESCRIPTION="Example session manager for PipeWire"
@@ -41,7 +39,6 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 DOCS=( NEWS LICENSE README.md )
-S="${WORKDIR}/${MY_PN}-${PV}"
 
 src_configure() {
 	local emesonargs=(
