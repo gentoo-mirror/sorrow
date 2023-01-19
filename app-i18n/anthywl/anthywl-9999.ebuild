@@ -14,6 +14,7 @@ EGIT_REPO_URI="https://github.com/tadeokondrak/anthywl.git"
 LICENSE="ISC"
 SLOT="0"
 KEYWORDS="~amd64"
+IUSE="+man ipc"
 
 DEPEND="
 	dev-libs/wayland
@@ -23,12 +24,22 @@ DEPEND="
 	x11-libs/pango
 	app-i18n/anthy
 	dev-libs/libscfg
-	dev-libs/libvarlink
+	ipc? ( dev-libs/libvarlink )
 "
 RDEPEND="${DEPEND}"
 BDEPEND=""
 
-src_install() {
+src_configure()
+{
+	local emesonargs=(
+		$(meson_feature man man-pages)
+		$(meson_feature ipc)
+	)
+	meson_src_configure
+}
+
+src_install()
+{
 	meson_src_install
 	default
 	insinto "/usr/share/anthywl"
