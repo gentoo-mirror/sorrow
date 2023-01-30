@@ -11,7 +11,7 @@ HOMEPAGE="https://github.com/deathowl/ddlm"
 EGIT_REPO_URI="https://github.com/deathowl/${PN}.git"
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-LICENSE="ddlm-EULA"
+LICENSE="GPL-3"
 SLOT="0"
 IUSE=""
 
@@ -31,4 +31,5 @@ src_unpack() {
 src_install() {
 	cargo_src_install
 	dodoc "README.md"
+	dodoc "LICENSE"
 }
