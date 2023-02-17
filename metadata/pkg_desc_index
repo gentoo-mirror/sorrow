@@ -15,5 +15,4 @@ media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
 media-sound/pavucontrol 5.0-r2: Pulseaudio Volume Control, GTK based mixer for Pulseaudio
 media-video/pipewire 0.3.64: Multimedia processing graphs
 media-video/pipewire-media-session 9999: Example session manager for PipeWire
-net-wireless/crda 4.14: Central Regulatory Domain Agent for wireless networks
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
