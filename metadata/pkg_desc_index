@@ -10,7 +10,7 @@ gui-apps/slurp 1.3.2: Select a region in a Wayland compositor
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wlsunset 9999: Day/night gamma adjustments for Wayland
 gui-apps/wofi 1.2.4: Launcher/menu program for wlroots based wayland compositors such as sway
-mail-mta/hydroxide 0.2.24: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
+mail-mta/hydroxide 0.2.25: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-plugins/mpv-mpris 0.5: MPRIS plugin for mpv
 media-sound/pavucontrol 5.0-r2: Pulseaudio Volume Control, GTK based mixer for Pulseaudio
 media-video/pipewire 0.3.67: Multimedia processing graphs
