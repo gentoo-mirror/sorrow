@@ -1,7 +1,6 @@
 app-i18n/anthywl 9999: japanese input method for wlroots-based compositors
 dev-libs/libscfg 9999: simple configuration format
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
-gnome-extra/gnome-system-monitor 44.0: The Gnome System Monitor
 gui-apps/ddlm 9999: deathowl's dummy login manager
 gui-apps/swaykbdd 1.1: Per-window keyboard layout switcher for Sway
 gui-apps/wev 9999: Wayland event viewer
