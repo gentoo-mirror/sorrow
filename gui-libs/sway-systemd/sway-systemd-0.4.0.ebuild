@@ -34,11 +34,20 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 }
 
+join_comma() {
+	local IFS=','
+	echo "${*}"
+}
+
 src_configure() {
+	local args=(
+		$(usex cgroups cgroups "")
+		$(usex autostart autostart "")
+		$(usex logind locale1 "")
+	)
+	echo ${args[@]}
 	local emesonargs=(
-		$(meson_feature cgroups)
-		$(meson_use autostart)
-		$(meson_use logind locale1)
+		-Dautoload-configs=$(join_comma ${args[@]})
 	)
 	meson_src_configure
 }
