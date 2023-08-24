@@ -1,9 +1,9 @@
 [Unit]
-Description=ProtonMail CardDAV, IMAP and SMTP bridge
+Description=ProtonMail IMAP and SMTP bridge
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/hydroxide serve
+ExecStart=/usr/bin/hydroxide -disable-carddav serve
 
 [Install]
 WantedBy=default.target
