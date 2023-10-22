@@ -2,7 +2,7 @@ app-i18n/anthywl 9999: japanese input method for wlroots-based compositors
 dev-libs/libscfg 9999: simple configuration format
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
 gui-apps/ddlm 9999: deathowl's dummy login manager
-gui-apps/swaykbdd 1.1: Per-window keyboard layout switcher for Sway
+gui-apps/swaykbdd 1.3: Per-window keyboard layout switcher for Sway
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wlsunset 9999: Day/night gamma adjustments for Wayland
 gui-libs/sway-systemd 0.4.0: Systemd integration for Sway session
