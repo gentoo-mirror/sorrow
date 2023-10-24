@@ -39,7 +39,7 @@ LICENSE="MIT LGPL-2.1+ GPL-2"
 # ABI was broken in 0.3.42 for https://gitlab.freedesktop.org/pipewire/wireplumber/-/issues/49
 SLOT="0/0.4"
 IUSE="bluetooth dbus doc echo-cancel extra ffmpeg flatpak gstreamer gsettings ieee1394 jack-client jack-sdk liblc3 lv2"
-IUSE+=" modemmanager pipewire-alsa readline roc sofa sound-server ssl system-service systemd test v4l X zeroconf"
+IUSE+=" modemmanager pipewire-alsa readline roc selinux sofa sound-server ssl system-service systemd test v4l X zeroconf"
 
 # Once replacing system JACK libraries is possible, it's likely that
 # jack-client IUSE will need blocking to avoid users accidentally
@@ -120,6 +120,7 @@ RDEPEND="
 	roc? ( media-libs/roc-toolkit )
 	readline? ( sys-libs/readline:= )
 	sofa? ( media-libs/libmysofa )
+	selinux? ( sys-libs/libselinux )
 	ssl? ( dev-libs/openssl:= )
 	systemd? ( sys-apps/systemd )
 	system-service? ( acct-user/pipewire )
@@ -151,7 +152,6 @@ DOCS=( {README,INSTALL}.md NEWS )
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.3.25-enable-failed-mlock-warning.patch
-	"${FILESDIR}"/${P}-support-both-webrtc-versions.patch
 )
 
 python_check_deps() {
@@ -190,6 +190,7 @@ multilib_src_configure() {
 
 		$(meson_native_use_feature systemd systemd-user-service)
 		$(meson_feature pipewire-alsa) # Allows integrating ALSA apps into PW graph
+		$(meson_feature selinux)
 		-Dspa-plugins=enabled
 		-Dalsa=enabled # Allows using kernel ALSA for sound I/O (NOTE: media-session is gone so IUSE=alsa/spa_alsa/alsa-backend might be possible)
 		-Dcompress-offload=disabled # TODO: tinycompress unpackaged

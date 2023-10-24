@@ -19,6 +19,10 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
+PATCHES=(
+	"${FILESDIR}/214.patch"
+)
+
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_TESTS=OFF
