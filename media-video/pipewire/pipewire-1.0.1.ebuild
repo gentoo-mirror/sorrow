@@ -23,11 +23,11 @@ EAPI=8
 : ${PIPEWIRE_DOCS_PREBUILT:=1}
 
 PIPEWIRE_DOCS_PREBUILT_DEV=sam
-PIPEWIRE_DOCS_VERSION="${PV}"
+PIPEWIRE_DOCS_VERSION=$(ver_cut 1-2).0
 # Default to generating docs (inc. man pages) if no prebuilt; overridden later
 PIPEWIRE_DOCS_USEFLAG="+man"
 PYTHON_COMPAT=( python3_{10..12} )
-inherit flag-o-matic meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
+inherit meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
 
 if [[ ${PV} == 9999 ]]; then
 	PIPEWIRE_DOCS_PREBUILT=0
@@ -84,17 +84,17 @@ REQUIRED_USE="
 RESTRICT="!test? ( test )"
 
 BDEPEND="
-	>=dev-util/meson-0.59
+	>=dev-build/meson-0.59
 	virtual/pkgconfig
 	dbus? ( dev-util/gdbus-codegen )
 	doc? (
 		${PYTHON_DEPS}
-		>=app-doc/doxygen-1.9.8
+		>=app-text/doxygen-1.9.8
 		media-gfx/graphviz
 	)
 	man? (
 		${PYTHON_DEPS}
-		>=app-doc/doxygen-1.9.8
+		>=app-text/doxygen-1.9.8
 	)
 "
 # * While udev could technically be optional, it's needed for a number of options,
@@ -176,8 +176,6 @@ PDEPEND="media-video/pipewire-media-session"
 # Ditto for DEPEND
 #	>=dev-util/vulkan-headers-1.1.69
 
-DOCS=( {README,INSTALL}.md NEWS )
-
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.3.25-enable-failed-mlock-warning.patch
 )
@@ -196,9 +194,6 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	# https://bugs.gentoo.org/838301
-	filter-flags -fno-semantic-interposition
-
 	local emesonargs=(
 		-Ddocdir="${EPREFIX}"/usr/share/doc/${PF}
 
