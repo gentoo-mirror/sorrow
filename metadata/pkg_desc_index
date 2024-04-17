@@ -14,3 +14,4 @@ media-sound/pavucontrol 5.0-r2: Pulseaudio Volume Control, GTK based mixer for P
 media-video/pipewire 1.0.5: Multimedia processing graphs
 media-video/pipewire-media-session 9999: Example session manager for PipeWire
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
+xfce-base/thunar 4.19.2: File manager for the Xfce desktop environment
