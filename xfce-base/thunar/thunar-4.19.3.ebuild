@@ -51,8 +51,6 @@ BDEPEND="
 "
 
 PATCHES=(
-	# https://gitlab.xfce.org/xfce/thunar/-/merge_requests/428
-	"${FILESDIR}/thunar-4.19.2-build-gio-extensions.patch"
 	"${FILESDIR}/thunar-4.19.2-no-x-workaround.patch"
 )
 
