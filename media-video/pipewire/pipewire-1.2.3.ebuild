@@ -163,8 +163,6 @@ RDEPEND="
 
 DEPEND="${RDEPEND}"
 
-# TODO: Consider use cases where pipewire is not used for driving audio
-# Doing so with WirePlumber currently involves editing Lua scripts
 PDEPEND="media-video/pipewire-media-session"
 
 # Present RDEPEND that are currently always disabled due to the PW
@@ -178,8 +176,6 @@ PDEPEND="media-video/pipewire-media-session"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.3.25-enable-failed-mlock-warning.patch
-	# https://gitlab.freedesktop.org/pipewire/pipewire/-/merge_requests/2061
-	"${FILESDIR}"/${PN}-1.2.0-automagic-gsettings.patch
 )
 
 pkg_setup() {
