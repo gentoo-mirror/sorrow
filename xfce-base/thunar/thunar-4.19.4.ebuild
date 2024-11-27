@@ -14,12 +14,12 @@ SRC_URI="https://archive.xfce.org/src/xfce/${PN}/${PV%.*}/${P}.tar.bz2"
 
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0/3"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
 IUSE="exif introspection libnotify pcre +trash-panel-plugin udisks"
 
 DEPEND="
-	>=dev-libs/glib-2.70.0
-	>=x11-libs/gdk-pixbuf-2.40.0
+	>=dev-libs/glib-2.72.0
+	>=x11-libs/gdk-pixbuf-2.42.8
 	>=x11-libs/gtk+-3.24.0:3
 	>=xfce-base/exo-4.19.0:=
 	>=xfce-base/libxfce4ui-4.17.6:=
@@ -51,7 +51,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/thunar-4.19.2-no-x-workaround.patch"
+	"${FILESDIR}/thunar-4.19.4-no-x-workaround.patch"
 )
 
 src_configure() {

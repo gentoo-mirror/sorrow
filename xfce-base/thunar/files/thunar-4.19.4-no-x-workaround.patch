@@ -1,13 +1,13 @@
 --- a/thunar/thunar-session-client.c
 +++ b/thunar/thunar-session-client.c
-@@ -37,7 +37,6 @@
- #endif
+@@ -42,7 +42,6 @@
+ #include "thunar/thunar-private.h"
+ #include "thunar/thunar-session-client.h"
  
- #include <glib/gstdio.h>
 -#include <gdk/gdkx.h>
+ #include <glib/gstdio.h>
  
- #include "thunar/thunar-application.h"
- #include "thunar/thunar-ice.h"
+ 
 @@ -170,9 +169,6 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
    if (G_UNLIKELY (session_client->connection == NULL))
      return FALSE;
