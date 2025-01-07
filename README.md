@@ -1,15 +1,7 @@
 # Install
 
-To add this overlay to your system you may use either `eselect-repository` (preferred) or `layman`. You might need to emerge the corresponding package first.
-
-### With eselect-repository:
+To add this overlay to your system you might need to emerge `eselect-repository` first.
 
 ```
 # eselect repository enable sorrow
-```
-
-### With layman:
-
-```
-# layman -a sorrow
 ```
