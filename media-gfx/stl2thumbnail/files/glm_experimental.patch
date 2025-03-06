@@ -1,0 +1,11 @@
+--- a/lib/math.h	2025-03-06 20:34:13.179262790 +1000
++++ b/lib/math.h	2025-03-06 20:34:52.683535510 +1000
+@@ -17,6 +17,8 @@
+ 
+ #pragma once
+ 
++#define GLM_ENABLE_EXPERIMENTAL
++
+ #include <glm/geometric.hpp>
+ #include <glm/gtx/string_cast.hpp>
+ #include <glm/vec3.hpp>
