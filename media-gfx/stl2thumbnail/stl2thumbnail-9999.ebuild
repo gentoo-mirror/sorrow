@@ -27,10 +27,6 @@ BDEPEND=""
 
 DOCS=()
 
-PATCHES=(
-	"${FILESDIR}/glm_experimental.patch"
-)
-
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_GENERATOR_GNOME=yes
