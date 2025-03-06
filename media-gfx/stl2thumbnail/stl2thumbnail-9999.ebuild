@@ -18,6 +18,7 @@ IUSE="kde"
 DEPEND="
 	media-libs/libpng
 	media-libs/glm
+	!media-gfx/stl2thumbnail_rs
 "
 
 RDEPEND="${DEPEND}"
@@ -25,10 +26,6 @@ RDEPEND="${DEPEND}"
 BDEPEND=""
 
 DOCS=()
-
-PATCHES=(
-	"${FILESDIR}/glm_experimental.patch"
-)
 
 src_configure() {
 	local mycmakeargs=(

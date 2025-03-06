@@ -116,8 +116,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="kde"
 DEPEND="
-	media-libs/libpng
-	media-libs/glm
+	!media-gfx/stl2thumbnail
 "
 
 RDEPEND="${DEPEND}"
