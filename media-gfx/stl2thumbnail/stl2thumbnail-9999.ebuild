@@ -18,6 +18,7 @@ IUSE="kde"
 DEPEND="
 	media-libs/libpng
 	media-libs/glm
+	!media-gfx/stl2thumbnail_rs
 "
 
 RDEPEND="${DEPEND}"
