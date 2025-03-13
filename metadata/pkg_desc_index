@@ -1,5 +1,4 @@
 app-i18n/anthywl 9999: japanese input method for wlroots-based compositors
-dev-python/dbus-next 0.2.3-r1: The next great DBus library for Python with asyncio support
 dev-python/i3ipc 2.2.1: An improved Python library for i3wm extensions
 gui-apps/ddlm 9999: deathowl's dummy login manager
 gui-apps/swaykbdd 1.4: Per-window keyboard layout switcher for Sway
