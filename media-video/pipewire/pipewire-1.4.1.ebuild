@@ -1,4 +1,4 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -27,7 +27,7 @@ PIPEWIRE_DOCS_VERSION="$(ver_cut 1-2).0"
 # Default to generating docs (inc. man pages) if no prebuilt; overridden later
 PIPEWIRE_DOCS_USEFLAG="+man"
 PYTHON_COMPAT=( python3_{10..13} )
-inherit eapi9-ver meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
+inherit meson-multilib optfeature prefix python-any-r1 systemd tmpfiles udev
 
 if [[ ${PV} == 9999 ]]; then
 	PIPEWIRE_DOCS_PREBUILT=0
@@ -56,7 +56,7 @@ HOMEPAGE="https://pipewire.org/"
 LICENSE="MIT LGPL-2.1+ GPL-2"
 # ABI was broken in 0.3.42 for https://gitlab.freedesktop.org/pipewire/wireplumber/-/issues/49
 SLOT="0/0.4"
-IUSE="${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg flatpak gstreamer gsettings ieee1394 jack-client jack-sdk liblc3 lv2"
+IUSE="${PIPEWIRE_DOCS_USEFLAG} bluetooth elogind dbus doc echo-cancel extra ffmpeg flatpak gstreamer gsettings ieee1394 jack-client jack-sdk liblc3 loudness lv2"
 IUSE+=" modemmanager pipewire-alsa readline roc selinux sofa sound-server ssl system-service systemd test v4l X zeroconf"
 
 # Once replacing system JACK libraries is possible, it's likely that
@@ -100,8 +100,8 @@ BDEPEND="
 # * While udev could technically be optional, it's needed for a number of options,
 # and not really worth it, bug #877769.
 #
-# * Supports both legacy webrtc-audio-processing:0 and new webrtc-audio-processing:1.
-# We depend on :1 as it prefers that, it's not legacy, and to avoid automagic.
+# * Supports both legacy webrtc-audio-processing:2 and new webrtc-audio-processing:1.
+# Automagic but :2 isn't yet packaged.
 #
 # * Older Doxygen (<1.9.8) may work but inferior output is created:
 #   - https://gitlab.freedesktop.org/pipewire/pipewire/-/merge_requests/1778
@@ -142,11 +142,12 @@ RDEPEND="
 		!media-sound/jack2
 	)
 	liblc3? ( media-sound/liblc3 )
+	loudness? ( media-libs/libebur128:=[${MULTILIB_USEDEP}] )
 	lv2? ( media-libs/lilv )
 	modemmanager? ( >=net-misc/modemmanager-1.10.0 )
-	pipewire-alsa? ( >=media-libs/alsa-lib-1.1.7[${MULTILIB_USEDEP}] )
+	pipewire-alsa? ( >=media-libs/alsa-lib-1.2.10[${MULTILIB_USEDEP}] )
 	sound-server? ( !media-sound/pulseaudio-daemon )
-	roc? ( >=media-libs/roc-toolkit-0.3.0:= )
+	roc? ( >=media-libs/roc-toolkit-0.4.0:= )
 	readline? ( sys-libs/readline:= )
 	sofa? ( media-libs/libmysofa )
 	selinux? ( sys-libs/libselinux )
@@ -259,6 +260,7 @@ multilib_src_configure() {
 		-Dtest=disabled # fakesink and fakesource plugins
 		-Dbluez5-codec-lc3plus=disabled # unpackaged
 		$(meson_native_use_feature liblc3 bluez5-codec-lc3)
+		$(meson_feature loudness ebur128)
 		$(meson_native_use_feature lv2)
 		$(meson_native_use_feature v4l v4l2)
 		-Dlibcamera=disabled # libcamera is not in Portage tree
@@ -380,7 +382,8 @@ pkg_postinst() {
 
 	use system-service && tmpfiles_process pipewire.conf
 
-	if [[ -n ${REPLACING_VERSIONS} ]] ; then
+	local ver
+	for ver in ${REPLACING_VERSIONS} ; do
 		if has_version kde-plasma/kwin[screencast] || has_version x11-wm/mutter[screencast] ; then
 			# https://bugs.gentoo.org/908490
 			# https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/3243
@@ -388,7 +391,7 @@ pkg_postinst() {
 			ewarn "Screencasting may not work until you do."
 		fi
 
-		if ver_replacing -le 0.3.66-r1 ; then
+		if ver_test ${ver} -le 0.3.66-r1 ; then
 			elog ">=pipewire-0.3.66 uses the 'pipewire' group to manage permissions"
 			elog "and limits needed to function smoothly:"
 			elog
@@ -454,7 +457,7 @@ pkg_postinst() {
 				fi
 			fi
 		fi
-	fi
+	done
 
 	if [[ ${HAD_SOUND_SERVER} -eq 0 || -z ${REPLACING_VERSIONS} ]] ; then
 		# TODO: We could drop most of this if we set up systemd presets?
