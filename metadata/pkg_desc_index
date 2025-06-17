@@ -15,5 +15,6 @@ media-video/pipewire 1.4.3-r1: Multimedia processing graphs
 media-video/pipewire-media-session 9999: Example session manager for PipeWire
 net-vpn/amneziawg-module 1.0.20240711: Fork of WireGuard with protection against detection by Deep Packet Inspection (DPI) systems
 net-vpn/amneziawg-tools 1.0.20241018: Tools for configuring Amnezia-WG, such as awg(8) and awg-quick(8)
+sys-apps/xdp-sway 0.1: A graphical diff and merge tool
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
 xfce-base/thunar 4.20.3: File manager for the Xfce desktop environment
