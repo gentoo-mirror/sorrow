@@ -33,6 +33,11 @@ if [[ ${PV} == 9999 ]]; then
 	PIPEWIRE_DOCS_PREBUILT=0
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
 	inherit git-r3
+elif [[ ${PV} == *.9999 ]] ; then
+	PIPEWIRE_DOCS_PREBUILT=0
+	EGIT_REPO_URI="https://gitlab.freedesktop.org/${PN}/${PN}.git"
+	EGIT_BRANCH="${PV%.*}"
+	inherit git-r3
 else
 	if [[ ${PV} == *_p* ]] ; then
 		MY_COMMIT=""
@@ -190,7 +195,9 @@ src_prepare() {
 	default
 
 	# Used for upstream backports
-	[[ -d "${FILESDIR}"/${PV} ]] && eapply "${FILESDIR}"/${PV}
+	if [[ ${PV} != *9999 && -d "${FILESDIR}"/${PV} ]] ; then
+		eapply "${FILESDIR}"/${PV}
+	fi
 }
 
 multilib_src_configure() {
