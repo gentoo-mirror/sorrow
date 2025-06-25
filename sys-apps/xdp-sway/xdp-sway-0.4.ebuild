@@ -24,6 +24,9 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/i3ipc[${PYTHON_USEDEP}]
 	')
+	$(python_gen_cond_dep '
+		dev-python/pygobject[${PYTHON_USEDEP}]
+	')
 "
 DEPEND="${RDEPEND}"
 BDEPEND=""
