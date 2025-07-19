@@ -5,7 +5,7 @@ gui-apps/swaykbdd 1.4: Per-window keyboard layout switcher for Sway
 gui-apps/wev 9999: Wayland event viewer
 gui-apps/wlsunset 9999: Day/night gamma adjustments for Wayland
 gui-libs/sway-systemd 0.4.1: Systemd integration for Sway session
-mail-mta/hydroxide 0.2.29: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
+mail-mta/hydroxide 0.2.30: A third-party, open-source ProtonMail CardDAV, IMAP and SMTP bridge
 media-gfx/stl2thumbnail 9999: A STL thumbnail generator
 media-gfx/stl2thumbnail_rs 1.1.0: An STL thumbnail and animation generator
 media-libs/libmysofa 1.3.2: Reader for AES SOFA files to get better HRTFs
