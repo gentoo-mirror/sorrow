@@ -17,4 +17,4 @@ net-vpn/amneziawg-module 1.0.20240711: Fork of WireGuard with protection against
 net-vpn/amneziawg-tools 1.0.20250706: Tools for configuring Amnezia-WG, such as awg(8) and awg-quick(8)
 sys-apps/xdp-sway 0.5: A graphical diff and merge tool
 virtual/notification-daemon 0: Virtual for notification daemon dbus service
-xfce-base/thunar 4.20.3: File manager for the Xfce desktop environment
+xfce-base/thunar 4.20.4: File manager for the Xfce desktop environment
